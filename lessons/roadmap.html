@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the whole course hangs off your answer key</title>
+<style>
+  :root{--bg:#fff;--fg:#18181b;--muted:#6b7280;--line:#d4d4d8;--card:#fafafa;
+        --you:#d97706;--you-bg:#fffbeb;--scorer:#db2777;--scorer-bg:#fdf2f8;
+        --plat:#2563eb;--plat-bg:#eff6ff;--out:#16a34a;--out-bg:#f0fdf4;
+        --trace:#7c3aed;--trace-bg:#f5f3ff;--done:#0d9488;--done-bg:#f0fdfa}
+  @media(prefers-color-scheme:dark){:root{--bg:#18181b;--fg:#f4f4f5;--muted:#a1a1aa;--line:#3f3f46;--card:#212124;
+        --you:#fbbf24;--you-bg:#3a2c0c;--scorer:#f472b6;--scorer-bg:#3d1527;
+        --plat:#60a5fa;--plat-bg:#1e293b;--out:#4ade80;--out-bg:#14301d;
+        --trace:#a78bfa;--trace-bg:#2a2140;--done:#2dd4bf;--done-bg:#10332f}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:38px 22px 70px;background:var(--bg);color:var(--fg);
+       font:16px/1.55 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif}
+  main{max-width:880px;margin:0 auto}
+  h1{font-size:24px;letter-spacing:-.02em;margin:0 0 5px}
+  .sub{color:var(--muted);margin:0 0 30px;font-size:15px}
+  h2{font-size:18px;margin:46px 0 14px;padding-top:20px;border-top:1px solid var(--line)}
+  .legend{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:28px}
+  .key{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:4px 10px;
+       border-radius:99px;border:1px solid var(--line);background:var(--card)}
+  .dot{width:9px;height:9px;border-radius:99px}
+
+  .hub{border:2px solid var(--you);background:var(--you-bg);border-radius:12px;
+       padding:15px 18px;text-align:center;margin:0 auto 6px;max-width:430px}
+  .hub .t{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--you)}
+  .hub .n{font-family:ui-monospace,monospace;font-size:17px;font-weight:600;margin:3px 0}
+  .hub .d{font-size:13px;color:var(--muted)}
+  .fan{text-align:center;color:var(--line);font-size:22px;line-height:1}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:11px;margin-top:6px}
+  .card{border:1.5px solid;border-radius:10px;padding:12px 14px;background:var(--card)}
+  .card .l{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .card .h{font-size:14.5px;font-weight:600;margin:2px 0 5px}
+  .card .b{font-size:13px;color:var(--muted);line-height:1.45}
+  .card code{font-size:12px;background:rgba(125,125,125,.16);padding:1px 4px;border-radius:3px}
+  .c-s{border-color:var(--scorer)} .c-s .l{color:var(--scorer)}
+  .c-p{border-color:var(--plat)}   .c-p .l{color:var(--plat)}
+  .c-o{border-color:var(--out)}    .c-o .l{color:var(--out)}
+  .c-d{border-color:var(--done);background:var(--done-bg)} .c-d .l{color:var(--done)}
+
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--card);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  td code{font-size:12.5px;background:var(--trace-bg);color:var(--trace);
+          padding:1px 5px;border-radius:4px;border:1px solid var(--trace)}
+  .note{border-left:4px solid var(--you);background:var(--you-bg);padding:13px 15px;
+        border-radius:0 9px 9px 0;margin:20px 0;font-size:14.5px}
+  .note b.t{display:block;margin-bottom:3px}
+</style>
+</head>
+<body>
+<main>
+
+<h1>Why the answer key is the only thing blocking everything</h1>
+<p class="sub">Eight lessons remain. All eight compare something against the grid you are
+about to fill in. That is the whole story, in one picture.</p>
+
+<div class="legend">
+  <span class="key"><span class="dot" style="background:var(--you)"></span>You produce it</span>
+  <span class="key"><span class="dot" style="background:var(--scorer)"></span>A scorer we build</span>
+  <span class="key"><span class="dot" style="background:var(--plat)"></span>A platform</span>
+  <span class="key"><span class="dot" style="background:var(--out)"></span>The output</span>
+  <span class="key"><span class="dot" style="background:var(--done)"></span>Already done</span>
+</div>
+
+<div class="hub">
+  <div class="t">Lesson 2 · your job now</div>
+  <div class="n">labels.jsonl</div>
+  <div class="d">8 traces × 4 dimensions = 32 verdicts</div>
+</div>
+<div class="fan">↓ &nbsp; ↓ &nbsp; ↓ &nbsp; ↓ &nbsp; ↓ &nbsp; ↓</div>
+
+<div class="grid">
+  <div class="card c-s"><div class="l">Lesson 3</div><div class="h">Cheap scorers</div>
+    <div class="b">Rules you specify. Do they agree with your grid? Where they can't, you'll see why judges exist.</div></div>
+  <div class="card c-s"><div class="l">Lesson 4</div><div class="h">LLM-as-judge</div>
+    <div class="b">You write the rubric. Measured against your grid, revised, re-measured.</div></div>
+  <div class="card c-s"><div class="l">Lesson 5</div><div class="h">Groundedness, split four ways</div>
+    <div class="b">Checked against your <code>groundedness</code> column — the one you already ran by hand on s02.</div></div>
+  <div class="card c-s"><div class="l">Lesson 6</div><div class="h">Trajectory</div>
+    <div class="b">Checked against your <code>trajectory</code> column and your <code>expected_tools</code>.</div></div>
+  <div class="card c-s"><div class="l">Lesson 7</div><div class="h">Whole-session scoring</div>
+    <div class="b">Checked against your <code>task_completion</code> column.</div></div>
+  <div class="card c-s"><div class="l">Lesson 8</div><div class="h">Judging your judges</div>
+    <div class="b">Every scorer above vs. your grid: agreement, luck-corrected agreement, false alarms. <b>Impossible without the grid.</b></div></div>
+  <div class="card c-p"><div class="l">Lesson 9</div><div class="h">Braintrust</div>
+    <div class="b">Its built-in scorers vs. your grid, on the same eight traces. Same yardstick, so the comparison is fair.</div></div>
+  <div class="card c-o"><div class="l">Lesson 10</div><div class="h">DECISIONS.md</div>
+    <div class="b">Your framework: when to use what. Written from what the grid revealed.</div></div>
+</div>
+
+<div class="note">
+  <b class="t">This is what "ground truth" meant in Lesson 1</b>
+  Not a tag beside the trace — the yardstick above it. Nothing downstream can be shown to work
+  without it, which is why it is the one thing I cannot do for you. If I write the answer key and
+  then measure my own scorers against it, I have proved nothing.
+</div>
+
+<h2>Which trace carries which lesson</h2>
+<p class="sub">Nothing was wasted. Every trace earns its place, and the two you already labelled
+are doing double duty.</p>
+
+<table>
+  <tr><th>Trace</th><th>What it teaches, and where</th></tr>
+  <tr><td><code>s01</code></td><td>Ungrounded reasoning with a correct conclusion — L5. Also the "passed but fragile" distinction.</td></tr>
+  <tr><td><code>s02</code></td><td>Claim-by-claim faithfulness, and why one verdict field is not enough — L5, L7.</td></tr>
+  <tr><td><code>s03</code></td><td>The clean one. A short, correct "no". <b>False-alarm bait</b> for every scorer — L8.</td></tr>
+  <tr><td><code>s04</code></td><td>Fabrication with a confident fake citation — L4, L5.</td></tr>
+  <tr><td><code>s05</code></td><td>Retrieval miss with an honest refusal. Passes faithfulness, fails recall. <b>The pair with s04 is why groundedness splits into four</b> — L5.</td></tr>
+  <tr><td><code>s06</code></td><td>Right answer, unrequested write. Answer-only scoring passes it — L6.</td></tr>
+  <tr><td><code>s07</code></td><td>Four excellent turns, one failed last turn. Averaging hides it — L7.</td></tr>
+  <tr><td><code>s08</code></td><td>Helpful, accurate, well-formatted, and a serious disclosure failure — L5, L8.</td></tr>
+</table>
+
+<div class="note">
+  <b class="t">Locked, so the direction cannot drift again</b>
+  Four dimensions — no more. Eight traces — no more. The audit was the single systematic pass, so
+  no further instrument quirks surface mid-lesson; everything found is already written into
+  <code>WORKSHEET.md</code> before you label. From here it is lesson, scorer, compare, record.
+</div>
+
+</main>
+</body>
+</html>

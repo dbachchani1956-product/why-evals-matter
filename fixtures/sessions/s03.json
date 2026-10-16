@@ -1,0 +1,82 @@
+{
+  "session_id": "s03",
+  "user_id": "E-2210",
+  "title": "Lounge access, Band 4",
+  "employee": {
+    "name": "Tom Okafor",
+    "band": 4,
+    "base": "London",
+    "open_report": "R-5591"
+  },
+  "turns": [
+    {
+      "turn_index": 0,
+      "user": "Can I claim airport lounge access? I'm Band 4.",
+      "spans": [
+        {
+          "type": "think",
+          "text": "Air travel policy question. Searching for the lounge rule specifically."
+        },
+        {
+          "type": "tool",
+          "name": "search_policy",
+          "args": {
+            "query": "airport lounge access reimbursable",
+            "k": 3
+          },
+          "result": {
+            "query": "airport lounge access reimbursable",
+            "k": 3,
+            "hits": [
+              {
+                "chunk_id": "travel-01-airfare#03",
+                "doc_id": "travel-01-airfare",
+                "heading": "Airport lounge access",
+                "score": 0.4641,
+                "text": "Airport lounge access\n\nAirport lounge access, day passes, and lounge memberships are **not reimbursable\nfor any band**, including Band 4 and above. This applies even where the lounge is\nbundled into a fare class. Employees who hold personal lounge memberships may use\nthem but may not claim the cost."
+              },
+              {
+                "chunk_id": "travel-01-airfare#05",
+                "doc_id": "travel-01-airfare",
+                "heading": "Changes and cancellations",
+                "score": 0.0838,
+                "text": "Changes and cancellations\n\nChange fees are reimbursable where the change is driven by business need. Fees\narising from personal preference are not reimbursable."
+              },
+              {
+                "chunk_id": "travel-01-airfare#04",
+                "doc_id": "travel-01-airfare",
+                "heading": "Seat selection and baggage",
+                "score": 0.0757,
+                "text": "Seat selection and baggage\n\n- Standard seat selection: reimbursable.\n- Extra-legroom or priority seating: not reimbursable below Band 4.\n- First checked bag: reimbursable. Additional bags require justification."
+              }
+            ]
+          }
+        },
+        {
+          "type": "think",
+          "text": "Direct hit, and it is unambiguous: lounge access is not reimbursable for any band, and the policy calls out Band 4 and above explicitly. It also covers the bundled-fare edge case, which is worth including because that is the usual follow-up question."
+        },
+        {
+          "type": "answer",
+          "text": "No - airport lounge access isn't reimbursable, and Band 4 doesn't change that.\n\nThe policy is explicit on this. Lounge access, day passes and lounge memberships are not reimbursable **for any band**, and it names Band 4 and above directly. It also covers the case you might be about to ask about: that still holds where the lounge is bundled into the fare class.\n\nIf you hold a personal lounge membership you're free to use it on business trips, you just can't claim the cost.\n\nSource: travel-01-airfare, \"Airport lounge access\"."
+        }
+      ]
+    }
+  ],
+  "tool_calls": [
+    {
+      "turn": 0,
+      "name": "search_policy",
+      "args": {
+        "query": "airport lounge access reimbursable",
+        "k": 3
+      }
+    }
+  ],
+  "retrieved_chunks": [
+    "travel-01-airfare#03",
+    "travel-01-airfare#05",
+    "travel-01-airfare#04"
+  ],
+  "final_answer": "No - airport lounge access isn't reimbursable, and Band 4 doesn't change that.\n\nThe policy is explicit on this. Lounge access, day passes and lounge memberships are not reimbursable **for any band**, and it names Band 4 and above directly. It also covers the case you might be about to ask about: that still holds where the lounge is bundled into the fare class.\n\nIf you hold a personal lounge membership you're free to use it on business trips, you just can't claim the cost.\n\nSource: travel-01-airfare, \"Airport lounge access\"."
+}

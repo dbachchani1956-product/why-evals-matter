@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 4 — the AI judge</title>
+<style>
+  :root{--bg:#fff;--fg:#18181b;--muted:#6b7280;--line:#d4d4d8;--card:#fafafa;
+        --you:#d97706;--you-bg:#fffbeb;--agent:#7c3aed;--agent-bg:#f5f3ff;
+        --tool:#0d9488;--tool-bg:#f0fdfa;--judge:#db2777;--judge-bg:#fdf2f8;
+        --no:#dc2626;--no-bg:#fef2f2;--ok:#16a34a;--ok-bg:#f0fdf4}
+  @media(prefers-color-scheme:dark){:root{--bg:#18181b;--fg:#f4f4f5;--muted:#a1a1aa;--line:#3f3f46;--card:#212124;
+        --you:#fbbf24;--you-bg:#3a2c0c;--agent:#a78bfa;--agent-bg:#2a2140;
+        --tool:#2dd4bf;--tool-bg:#10332f;--judge:#f472b6;--judge-bg:#3d1527;
+        --no:#f87171;--no-bg:#3b1515;--ok:#4ade80;--ok-bg:#14301d}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:42px 22px 80px;background:var(--bg);color:var(--fg);
+       font:17px/1.6 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif}
+  main{max-width:820px;margin:0 auto}
+  h1{font-size:26px;letter-spacing:-.02em;margin:0 0 8px}
+  .sub{color:var(--muted);font-size:16px;margin:0 0 18px}
+  h2{font-size:21px;margin:48px 0 12px;padding-top:24px;border-top:2px solid var(--line)}
+  h2:first-of-type{border-top:none;padding-top:0}
+  p{font-size:17px}
+  code{font-family:ui-monospace,monospace;font-size:14.5px;background:rgba(125,125,125,.16);
+       padding:2px 6px;border-radius:4px}
+  .bx{border:2px solid var(--line);border-radius:12px;padding:15px 18px;margin:12px 0;background:var(--card)}
+  .bx .k{font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+         display:block;margin-bottom:6px}
+  .b-a{border-color:var(--agent);background:var(--agent-bg)} .b-a .k{color:var(--agent)}
+  .b-t{border-color:var(--tool);background:var(--tool-bg)}   .b-t .k{color:var(--tool)}
+  .b-j{border-color:var(--judge);background:var(--judge-bg)} .b-j .k{color:var(--judge)}
+  .b-y{border-color:var(--you);background:var(--you-bg)}     .b-y .k{color:var(--you)}
+
+  .flow{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr;gap:8px;align-items:center;margin:18px 0}
+  @media(max-width:760px){.flow{grid-template-columns:1fr}.flow .ar{display:none}}
+  .ar{text-align:center;color:var(--muted);font-size:20px}
+  .sm{font-size:14.5px;padding:12px 14px}
+
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+  @media(max-width:760px){.vs{grid-template-columns:1fr}}
+  .col{border:2px solid;border-radius:12px;padding:15px 17px}
+  .cbad{border-color:var(--no);background:var(--no-bg)}
+  .cgood{border-color:var(--ok);background:var(--ok-bg)}
+  .col h3{margin:0 0 3px;font-size:16px}
+  .col .tag{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+  .cbad .tag{color:var(--no)} .cgood .tag{color:var(--ok)}
+  .col pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:11px 13px;
+           font-size:13.5px;line-height:1.45;overflow-x:auto;margin:10px 0;white-space:pre-wrap}
+  .col .res{font-size:14.5px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+
+  .parts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:11px;margin:16px 0}
+  .pt{border:1.5px solid var(--judge);border-radius:11px;padding:13px 15px;background:var(--judge-bg)}
+  .pt .n{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--judge)}
+  .pt h4{margin:3px 0 5px;font-size:15.5px}
+  .pt p{font-size:13.5px;color:var(--muted);margin:0;line-height:1.45}
+
+  .ask{border:2px solid var(--you);background:var(--you-bg);border-radius:14px;padding:20px 22px;margin:26px 0}
+  .ask h3{margin:0 0 8px;font-size:18px;color:var(--you)}
+  .ask ol{margin:0;padding-left:21px;font-size:16.5px}
+  .ask li{margin-bottom:10px}
+</style>
+</head>
+<body>
+<main>
+
+<h1>Lesson 4 — asking an AI to be the judge</h1>
+<p class="sub">For the one thing rules couldn't do.</p>
+
+
+<h2>The exact sentence we need to catch</h2>
+
+<p>This is from <code>s01</code> — the conversation you marked <code>groundedness: fail</code>.</p>
+
+<div class="bx b-a"><span class="k">what the agent told the user</span>
+  "The older one (expense-04-limits, effective January 2024) shows EUR 60…
+  It has been <b>superseded in full</b> by expense-05-limits-updated,
+  <b>effective 1 January 2026</b>."</div>
+
+<div class="bx b-t"><span class="k">what the search actually gave it — all of it</span>
+  Two copies of a table of meal limits by band, and one section called "Exceeding a limit".
+  <br><br>
+  The words <b>superseded</b>, <b>effective</b>, <b>2024</b> and <b>2026</b> appear
+  <b>nowhere</b> in any of it.</div>
+
+<p>The agent invented a document's status and publication dates. Your rule from Lesson 3 can't
+see it, because there's no made-up <i>number</i> in the headline — €75 was correct and properly
+sourced. The made-up part is a <b>sentence</b>.</p>
+
+<p>Catching that needs something that can read.</p>
+
+
+<h2>What a judge is, mechanically</h2>
+
+<div class="flow">
+  <div class="bx b-y sm"><span class="k">you write this, once</span>Instructions: what to look for, and
+    what counts as pass or fail</div>
+  <div class="ar">+</div>
+  <div class="bx b-t sm"><span class="k">the machine supplies this, per trace</span>The retrieved
+    text, and the agent's answer</div>
+  <div class="ar">→</div>
+  <div class="bx b-j sm"><span class="k">an AI returns</span>A verdict, plus its reasoning</div>
+</div>
+
+<p>That's the whole thing. It's a scorer whose logic is <b>written in English instead of code</b>.
+You already wrote four scorers in Lesson 3; this is the fifth, and the only difference is that the
+instructions get read by a model rather than executed by Python.</p>
+
+<p>Which buys you reading comprehension — and costs you money, a few seconds per trace, and the
+fact that it can give you a different answer tomorrow on the same input. That trade is why Lesson
+3 came first.</p>
+
+
+<h2>The instructions are called a rubric. Here's bad and good.</h2>
+
+<p>Both of these ask about something simple — <b>was the answer concise?</b> — so the form is
+visible without giving away anything about groundedness.</p>
+
+<div class="vs">
+  <div class="col cbad">
+    <span class="tag">bad rubric</span>
+    <h3>No criteria, no levels</h3>
+    <pre>Rate how concise this answer is,
+from 1 to 10.</pre>
+    <div class="res"><b>What you get back:</b> "7". And next week, on the same answer, "8".<br><br>
+    You cannot act on a 7. Nobody can say what would have made it an 8, so no one can fix
+    anything. And the judge invented its own private idea of "concise" to produce it.</div>
+  </div>
+  <div class="col cgood">
+    <span class="tag">good rubric</span>
+    <h3>Criteria, and what each level means</h3>
+    <pre>Decide whether the answer is concise.
+
+PASS - every paragraph is needed to
+  answer the question asked.
+FAIL - the answer contains at least one
+  paragraph the user did not ask for and
+  does not need.
+
+First list each paragraph and say whether
+it was asked for. Then give one word:
+PASS or FAIL.</pre>
+    <div class="res"><b>What you get back:</b> a list of paragraphs, each marked, then a verdict.
+    Same answer tomorrow. And if it fails, you know <i>which paragraph</i> to cut.</div>
+  </div>
+</div>
+
+<p>Three things made the second one work:</p>
+
+<div class="parts">
+  <div class="pt"><div class="n">part 1</div><h4>Criteria</h4>
+    <p>What specifically to look at. Not "is it good" — "is every paragraph needed".</p></div>
+  <div class="pt"><div class="n">part 2</div><h4>Levels</h4>
+    <p>What pass means and what fail means, stated so two people would agree.</p></div>
+  <div class="pt"><div class="n">part 3</div><h4>Reasoning first</h4>
+    <p>List the evidence <i>before</i> the verdict. A judge that answers first and explains
+    afterwards is just rationalising.</p></div>
+</div>
+
+
+<h2>Your turn</h2>
+
+<p>Write the rubric for the thing rules couldn't catch. I'll run it word-for-word on all eight
+conversations and show you my reasoning for each.</p>
+
+<div class="ask">
+  <h3>The job: did the agent state something its sources didn't support?</h3>
+  <p style="font-size:16px">You'll be given, for each conversation: the text the search
+  returned, and the agent's answer. Write instructions telling the judge what to look for and how
+  to decide.</p>
+  <ol>
+    <li><b>Criteria</b> — what should the judge examine? (Think about what unit it should look at.
+      The whole answer at once? Or something smaller?)</li>
+    <li><b>Levels</b> — what exactly makes it a pass, and what makes it a fail? You already have a
+      rule here from Lesson 2 that you may want to reuse: <i>unsupported claims matter when
+      they're load-bearing, not when they're incidental.</i></li>
+    <li><b>Output</b> — what should the judge hand back, and in what order?</li>
+  </ol>
+  <p style="font-size:16px;margin-bottom:0">Rough and in your own words is fine. It will be
+  flawed, we'll run it, and the numbers will show you where.</p>
+</div>
+
+</main>
+</body>
+</html>

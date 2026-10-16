@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 5 — groundedness is four measurements</title>
+<style>
+  :root{--bg:#fff;--fg:#18181b;--muted:#6b7280;--line:#d4d4d8;--card:#fafafa;
+        --q:#2563eb;--q-bg:#eff6ff;--doc:#0d9488;--doc-bg:#f0fdfa;
+        --ans:#7c3aed;--ans-bg:#f5f3ff;--m:#db2777;--m-bg:#fdf2f8;
+        --no:#dc2626;--no-bg:#fef2f2;--ok:#16a34a;--ok-bg:#f0fdf4;--you:#d97706;--you-bg:#fffbeb}
+  @media(prefers-color-scheme:dark){:root{--bg:#18181b;--fg:#f4f4f5;--muted:#a1a1aa;--line:#3f3f46;--card:#212124;
+        --q:#60a5fa;--q-bg:#1e293b;--doc:#2dd4bf;--doc-bg:#10332f;
+        --ans:#a78bfa;--ans-bg:#2a2140;--m:#f472b6;--m-bg:#3d1527;
+        --no:#f87171;--no-bg:#3b1515;--ok:#4ade80;--ok-bg:#14301d;--you:#fbbf24;--you-bg:#3a2c0c}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:42px 22px 80px;background:var(--bg);color:var(--fg);
+       font:17px/1.6 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif}
+  main{max-width:860px;margin:0 auto}
+  h1{font-size:26px;letter-spacing:-.02em;margin:0 0 8px}
+  .sub{color:var(--muted);font-size:16px;margin:0 0 24px}
+  h2{font-size:20px;margin:48px 0 12px;padding-top:22px;border-top:2px solid var(--line)}
+  h2:first-of-type{border-top:none;padding-top:0}
+  p{font-size:17px}
+  code{font-family:ui-monospace,monospace;font-size:14px;background:rgba(125,125,125,.16);
+       padding:2px 6px;border-radius:4px}
+
+  .pipe{margin:22px 0}
+  .stage{display:grid;grid-template-columns:1fr 250px;gap:14px;align-items:center;margin-bottom:7px}
+  @media(max-width:740px){.stage{grid-template-columns:1fr}}
+  .sb{border:2px solid var(--line);border-radius:11px;padding:13px 16px;background:var(--card)}
+  .sb .k{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;display:block;margin-bottom:3px}
+  .s-q{border-color:var(--q);background:var(--q-bg)}   .s-q .k{color:var(--q)}
+  .s-d{border-color:var(--doc);background:var(--doc-bg)} .s-d .k{color:var(--doc)}
+  .s-a{border-color:var(--ans);background:var(--ans-bg)} .s-a .k{color:var(--ans)}
+  .chk{border:2px dashed var(--m);background:var(--m-bg);border-radius:11px;padding:11px 14px;font-size:14px}
+  .chk b{display:block;color:var(--m);font-size:13px;margin-bottom:2px}
+  .down{text-align:center;color:var(--line);font-size:19px;line-height:1.1;margin:2px 0}
+
+  table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left}
+  th{background:var(--card);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  td.t{font-family:ui-monospace,monospace;font-weight:700}
+  .num{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
+  .z{color:var(--no)} .full{color:var(--ok)} .mid{color:var(--you)}
+
+  .pair{border:2px solid var(--line);border-radius:13px;padding:17px 20px;margin:17px 0;background:var(--card)}
+  .pair h3{margin:0 0 4px;font-size:17px}
+  .pair .lead{color:var(--muted);font-size:15px;margin:0 0 12px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:740px){.two{grid-template-columns:1fr}}
+  .half{border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--bg);font-size:15px}
+  .half .n{font-family:ui-monospace,monospace;font-weight:700;font-size:15px;margin-bottom:5px}
+  .fix{margin-top:12px;padding-top:11px;border-top:1px dashed var(--line);font-size:16px}
+
+  .note{border-left:4px solid var(--you);background:var(--you-bg);padding:14px 17px;
+        border-radius:0 10px 10px 0;margin:20px 0;font-size:16.5px}
+  .note.corr{border-left-color:var(--no);background:var(--no-bg)}
+  .note b.t{display:block;margin-bottom:4px;font-size:17px}
+</style>
+</head>
+<body>
+<main>
+
+<h1>Lesson 5 — "groundedness" is four different measurements</h1>
+<p class="sub">An open-book exam has four places it can go wrong. So does a document-answering agent.</p>
+
+
+<h2>The pipeline, with a checkpoint at each stage</h2>
+
+<div class="pipe">
+  <div class="stage">
+    <div class="sb s-q"><span class="k">1 · the question</span>"What's the hotel cap for Berlin?"</div>
+    <div></div>
+  </div>
+  <div class="down">↓ &nbsp;the search runs</div>
+  <div class="stage">
+    <div class="sb s-d"><span class="k">2 · the documents it found</span>Three chunks of policy text</div>
+    <div class="chk"><b>context recall</b>Did it find the pages that actually contain the answer?</div>
+  </div>
+  <div class="stage">
+    <div></div>
+    <div class="chk"><b>context precision</b>Of the pages it did find, how many were relevant?</div>
+  </div>
+  <div class="down">↓ &nbsp;the agent reads them and writes</div>
+  <div class="stage">
+    <div class="sb s-a"><span class="k">3 · the answer</span>"The cap is EUR 200 per night."</div>
+    <div class="chk"><b>faithfulness</b>Does the answer stick to what those pages said?</div>
+  </div>
+  <div class="stage">
+    <div></div>
+    <div class="chk"><b>answer relevance</b>Does it answer the question that was asked?</div>
+  </div>
+</div>
+
+<p>Four checkpoints, each comparing a <b>different pair</b> of things. That's why they can't be
+one number: recall compares <i>found documents</i> against <i>documents that existed</i>, while
+faithfulness compares <i>the answer</i> against <i>the found documents</i>. Different inputs,
+different failure, different repair.</p>
+
+
+<h2>The real numbers, on your eight conversations</h2>
+
+<p>Recall and precision computed mechanically, using the <code>source</code> field in
+<code>reference_answers.json</code> as the list of chunks that actually contain each answer.</p>
+
+<table>
+  <tr><th>trace</th><th class="num">recall</th><th class="num">precision</th>
+      <th>faithfulness<br><span style="font-weight:400;text-transform:none">(your v2 judge)</span></th><th>what it means</th></tr>
+  <tr><td class="t">s01</td><td class="num full">1.00</td><td class="num">0.33</td><td class="z">fail</td>
+      <td>Found the right page, then claimed things beyond it</td></tr>
+  <tr><td class="t">s02</td><td class="num mid">0.50</td><td class="num">0.33</td><td class="z">fail</td>
+      <td>Found the rates, <b>missed the travel-day rule</b> — then stated it anyway</td></tr>
+  <tr><td class="t">s03</td><td class="num full">1.00</td><td class="num">0.33</td><td class="full">pass</td>
+      <td>Clean on both</td></tr>
+  <tr><td class="t">s04</td><td class="num z">0.00</td><td class="num z">0.00</td><td class="z">fail</td>
+      <td>Found nothing useful, <b>invented an answer</b></td></tr>
+  <tr><td class="t">s05</td><td class="num z">0.00</td><td class="num z">0.00</td><td class="full">pass</td>
+      <td>Found nothing useful, <b>said so</b></td></tr>
+  <tr><td class="t">s06</td><td class="num full">1.00</td><td class="num">0.33</td><td class="full">pass</td>
+      <td>Clean; the unsupported aside was incidental</td></tr>
+  <tr><td class="t">s07</td><td class="num full">1.00</td><td class="num mid">0.56</td><td class="full">pass</td>
+      <td>Searched three times, found all five needed pages</td></tr>
+  <tr><td class="t">s08</td><td class="num">n/a</td><td class="num">n/a</td><td class="full">pass</td>
+      <td>Ran no search at all — nothing to measure</td></tr>
+</table>
+
+
+<h2>The pair you keep asking about</h2>
+
+<div class="note corr">
+  <b class="t">First, a correction to what I told you in the preview</b>
+  I said s04's search was "fine-ish" and the agent was the problem. <b>That was wrong.</b> The
+  numbers say s04's recall is <b>0.00</b> — its search failed just as completely as s05's. I was
+  going from memory instead of measuring. The real story is better than the one I previewed.
+</div>
+
+<div class="pair">
+  <h3>Identical retrieval failure. Opposite agent behaviour.</h3>
+  <p class="lead">Both searches returned nothing containing the answer. Recall 0.00 for each.</p>
+  <div class="two">
+    <div class="half">
+      <div class="n">s04</div>
+      recall <b class="z">0.00</b> — never found the hotel-cap page<br>
+      faithfulness <b class="z">fail</b> — stated "EUR 200 per night" and cited a section it
+      had never seen
+    </div>
+    <div class="half">
+      <div class="n">s05</div>
+      recall <b class="z">0.00</b> — never found the France rate page<br>
+      faithfulness <b class="full">pass</b> — "I couldn't find it, I'd rather not guess"
+    </div>
+  </div>
+  <div class="fix">
+    <b>Why this matters:</b> both need the <b>search</b> fixed — the answer was in the corpus
+    both times. But only <b>s04</b> also needs the <b>agent</b> fixed, because an agent that
+    invents a number when it finds nothing is dangerous in a way that one which says "I don't
+    know" is not.<br><br>
+    <b>One number cannot tell you that.</b> You need recall <i>and</i> faithfulness side by side
+    to see that the retrieval bug is shared and the agent bug isn't.
+  </div>
+</div>
+
+
+<h2>Two more things the numbers show</h2>
+
+<div class="pair">
+  <h3><code>s02</code> — recall explains the faithfulness failure</h3>
+  <p class="lead">Recall 0.50: it found the rates table, it missed <code>travel-02-perdiem#03</code>
+  — the chunk containing the travel-days rule.</p>
+  <p style="font-size:16px;margin:0">Which is <b>exactly</b> the claim you flagged as unsupported:
+  "departure and return days are reimbursed at 50%". The recall number tells you <i>why</i>
+  faithfulness failed, and names the missing chunk. That is the difference between a score and a
+  diagnosis.</p>
+</div>
+
+<div class="pair">
+  <h3>Precision is <b>0.33</b> on almost every conversation</h3>
+  <p class="lead">The search is set to return 3 chunks. Usually only 1 is relevant.</p>
+  <p style="font-size:16px;margin:0">So roughly <b>two thirds of everything handed to the
+  agent is noise</b> — every single time. No individual conversation fails because of it, which
+  is exactly why nobody notices. It only shows up when you measure the same thing across all
+  eight. The agent is paying for, and reading, twice as much irrelevant text as relevant.</p>
+</div>
+
+<div class="note">
+  <b class="t">What you can now do that you couldn't before</b>
+  Open any eval platform's RAG metric list — Braintrust, Galileo, Foundry, Ragas, anything — and
+  you'll see four or five names that all sound like "is the answer right". You now know each one
+  compares a specific <b>pair</b> of things, and which repair each failure points to.<br><br>
+  A single "groundedness: 0.6" tells you something is wrong. Recall 0.00 with faithfulness fail
+  tells you to fix the search <i>and</i> stop the agent guessing.
+</div>
+
+</main>
+</body>
+</html>

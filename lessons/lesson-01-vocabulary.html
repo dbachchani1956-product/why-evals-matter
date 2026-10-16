@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 1 — trace, label, trajectory, rubric</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #18181b; --muted: #6b7280; --line: #d4d4d8;
+    --card: #fafafa; --shadow: 0 1px 3px rgba(0,0,0,.08);
+    --user: #2563eb;   --user-bg: #eff6ff;
+    --agent: #7c3aed;  --agent-bg: #f5f3ff;
+    --tool: #0d9488;   --tool-bg: #f0fdfa;
+    --human: #d97706;  --human-bg: #fffbeb;
+    --judge: #db2777;  --judge-bg: #fdf2f8;
+    --bad: #dc2626;    --bad-bg: #fef2f2;
+    --good: #16a34a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #18181b; --fg: #f4f4f5; --muted: #a1a1aa; --line: #3f3f46;
+      --card: #212124; --shadow: none;
+      --user: #60a5fa;  --user-bg: #1e293b;
+      --agent: #a78bfa; --agent-bg: #2a2140;
+      --tool: #2dd4bf;  --tool-bg: #10332f;
+      --human: #fbbf24; --human-bg: #3a2c0c;
+      --judge: #f472b6; --judge-bg: #3d1527;
+      --bad: #f87171;   --bad-bg: #3b1515;
+      --good: #4ade80;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 40px 24px 80px; background: var(--bg); color: var(--fg);
+    font: 16px/1.6 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  main { max-width: 920px; margin: 0 auto; }
+  h1 { font-size: 26px; letter-spacing: -.02em; margin: 0 0 6px; }
+  h2 { font-size: 20px; letter-spacing: -.01em; margin: 56px 0 4px; padding-top: 24px; border-top: 1px solid var(--line); }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+  .sub { color: var(--muted); margin: 0 0 28px; font-size: 15px; }
+  .verdict { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+  .v-ok { color: var(--good); }  .v-part { color: var(--human); }  .v-no { color: var(--bad); }
+
+  /* legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 36px; }
+  .key { display: inline-flex; align-items: center; gap: 7px; font-size: 13px;
+         padding: 5px 11px; border-radius: 99px; border: 1px solid var(--line); background: var(--card); }
+  .dot { width: 9px; height: 9px; border-radius: 99px; flex: none; }
+
+  /* flow */
+  .flow { display: flex; flex-direction: column; gap: 0; margin: 20px 0 8px; }
+  .box { border: 1.5px solid; border-radius: 10px; padding: 11px 14px; background: var(--card); box-shadow: var(--shadow); }
+  .box .who { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; opacity: .85; }
+  .box .what { margin-top: 3px; font-size: 14.5px; }
+  .box code { font-size: 13px; background: rgba(125,125,125,.14); padding: 1px 5px; border-radius: 4px; }
+  .b-user  { border-color: var(--user);  background: var(--user-bg); }
+  .b-user .who  { color: var(--user); }
+  .b-agent { border-color: var(--agent); background: var(--agent-bg); }
+  .b-agent .who { color: var(--agent); }
+  .b-tool  { border-color: var(--tool);  background: var(--tool-bg); }
+  .b-tool .who  { color: var(--tool); }
+  .b-human { border-color: var(--human); background: var(--human-bg); }
+  .b-human .who { color: var(--human); }
+  .b-judge { border-color: var(--judge); background: var(--judge-bg); }
+  .b-judge .who { color: var(--judge); }
+  .arrow { height: 16px; width: 2px; background: var(--line); margin: 0 auto; }
+
+  /* bracket annotations */
+  .annotated { display: grid; grid-template-columns: 1fr 190px; gap: 16px; align-items: stretch; }
+  .brackets { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+  .brk { border-left: 3px solid var(--line); padding: 8px 0 8px 11px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .brk b { display: block; font-size: 13.5px; }
+  .brk span { color: var(--muted); font-size: 12.5px; line-height: 1.45; }
+
+  /* two-up compare */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 22px 0 10px; }
+  @media (max-width: 720px) { .compare, .annotated { grid-template-columns: 1fr; } }
+  .panel { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--card); }
+  .panel h3 { margin: 0 0 3px; font-size: 15.5px; }
+  .panel .tag { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+  .panel p { font-size: 14px; color: var(--muted); margin: 8px 0 12px; }
+  .chip { display: inline-block; font-family: ui-monospace, SFMono-Regular, monospace;
+          font-size: 13px; padding: 6px 10px; border-radius: 7px; border: 1.5px dashed; margin: 3px 0; }
+
+  /* rubric grid */
+  table { border-collapse: collapse; width: 100%; margin: 20px 0 8px; font-size: 14px; }
+  th, td { border: 1px solid var(--line); padding: 9px 11px; text-align: left; vertical-align: top; }
+  th { background: var(--card); font-size: 12.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  td.crit { font-weight: 500; }
+  .pill { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 99px; letter-spacing: .04em; }
+  .p-agent { background: var(--agent-bg); color: var(--agent); border: 1px solid var(--agent); }
+  .p-tool  { background: var(--tool-bg);  color: var(--tool);  border: 1px solid var(--tool); }
+  .note { border-left: 3px solid var(--human); background: var(--human-bg); padding: 12px 15px; border-radius: 0 8px 8px 0; margin: 18px 0; font-size: 14.5px; }
+  .note.bad { border-left-color: var(--bad); background: var(--bad-bg); }
+  .note b { display: block; margin-bottom: 3px; }
+  .quote { font-style: italic; color: var(--muted); border-left: 3px solid var(--line); padding-left: 13px; margin: 14px 0; font-size: 14.5px; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Lesson 1 — the four words, as diagrams</h1>
+<p class="sub">Worked through your own example: a user cancelling a hotel booking.
+Every box is tinted by <b>who produced it</b>.</p>
+
+<div class="legend">
+  <span class="key"><span class="dot" style="background:var(--user)"></span>The user, in the conversation</span>
+  <span class="key"><span class="dot" style="background:var(--agent)"></span>The agent under test</span>
+  <span class="key"><span class="dot" style="background:var(--tool)"></span>A tool / backend system</span>
+  <span class="key"><span class="dot" style="background:var(--human)"></span>You, reviewing afterwards</span>
+  <span class="key"><span class="dot" style="background:var(--judge)"></span>A scorer / judge</span>
+</div>
+
+
+<h2>1. Trace</h2>
+<p class="verdict v-ok">your answer: correct</p>
+<p class="sub">You said: a recorded history of a session — user message, agent reasoning,
+tool input and output, agent reply, for every turn. That is exactly it. Here it is as a picture.</p>
+
+<div class="annotated">
+  <div class="flow">
+    <div class="box b-user"><div class="who">User · turn 1</div>
+      <div class="what">"Cancel my Berlin booking for next week."</div></div>
+    <div class="arrow"></div>
+    <div class="box b-agent"><div class="who">Agent · reasoning</div>
+      <div class="what">Needs identity confirmed before a destructive action.</div></div>
+    <div class="arrow"></div>
+    <div class="box b-agent"><div class="who">Agent · reply</div>
+      <div class="what">"Can you confirm the booking reference?"</div></div>
+    <div class="arrow"></div>
+    <div class="box b-user"><div class="who">User · turn 2</div>
+      <div class="what">"BK-77120."</div></div>
+    <div class="arrow"></div>
+    <div class="box b-tool"><div class="who">Tool call</div>
+      <div class="what"><code>get_booking("BK-77120")</code> → Berlin, €412, free cancellation until Tue</div></div>
+    <div class="arrow"></div>
+    <div class="box b-tool"><div class="who">Tool call</div>
+      <div class="what"><code>cancel_booking("BK-77120")</code> → <b>ok: true, refund €412</b></div></div>
+    <div class="arrow"></div>
+    <div class="box b-agent"><div class="who">Agent · reply</div>
+      <div class="what">"Cancelled. You're all set."</div></div>
+  </div>
+
+  <div class="brackets">
+    <div class="brk"><b>span</b><span>One step. Each box above is one span.</span></div>
+    <div class="brk"><b>turn</b><span>One user message plus everything the agent did in response.</span></div>
+    <div class="brk"><b>session</b><span>Both turns together — the whole conversation.</span></div>
+    <div class="brk"><b>trace</b><span>The recorded file of all of it. What you ship to a platform.</span></div>
+  </div>
+</div>
+
+
+<h2>2. Label — this is where you went wrong</h2>
+<p class="verdict v-no">your answer: wrong, and worth getting right</p>
+<p class="sub">You described a category tag — "the label the creator puts, like <i>booking</i>".
+That is a real thing, but it is not what <i>label</i> means in evaluation. The word is overloaded,
+which is exactly why this trips people.</p>
+
+<div class="compare">
+  <div class="panel">
+    <div class="tag" style="color:var(--tool)">WHAT YOU DESCRIBED</div>
+    <h3>Intent tag / metadata</h3>
+    <p>A category attached <b>beside</b> the trace so you can filter and group.
+    Usually set automatically, by the system.</p>
+    <span class="chip" style="border-color:var(--tool); color:var(--tool)">intent = "cancellation"</span><br>
+    <span class="chip" style="border-color:var(--tool); color:var(--tool)">channel = "web"</span>
+    <p style="margin-bottom:0"><b>Answers:</b> which kind of conversation is this?<br>
+    <b>Use:</b> slicing dashboards — "how do we do on cancellations?"<br>
+    <b>Says nothing about</b> whether this one was any good.</p>
+  </div>
+
+  <div class="panel">
+    <div class="tag" style="color:var(--human)">WHAT EVAL MEANS</div>
+    <h3>Ground truth / label</h3>
+    <p>A <b>verdict</b> you write <b>above</b> the trace, saying what <i>should</i> have happened.
+    Always produced by a human.</p>
+    <span class="chip" style="border-color:var(--human); color:var(--human)">verdict = FAIL</span><br>
+    <span class="chip" style="border-color:var(--human); color:var(--human)">reason = "never told the user<br>the €412 refund amount"</span>
+    <p style="margin-bottom:0"><b>Answers:</b> was this conversation correct?<br>
+    <b>Use:</b> the answer key every scorer gets checked against.<br>
+    <b>This is the thing</b> without which no metric can be shown to work.</p>
+  </div>
+</div>
+
+<div class="note">
+  <b>Why the confusion is reasonable</b>
+  In classification machine learning, the label <i>is</i> the category — "this email is spam".
+  In evaluation, the label is the <i>correctness verdict</i> — "this conversation failed, here's why".
+  Same word, different job. Platform docs rarely say which one they mean.
+</div>
+
+<div class="flow" style="margin-top:26px">
+  <div class="box b-human"><div class="who">You, afterwards · ground truth</div>
+    <div class="what"><b>FAIL</b> — confirmed identity and cancelled correctly, but never told the user
+    the €412 refund. The user's actual goal was only half met.</div></div>
+  <div class="arrow"></div>
+  <div class="box b-user" style="opacity:.55"><div class="who">↑ the verdict sits above the whole trace from section 1 ↑</div>
+    <div class="what" style="font-size:13.5px">…two turns, two tool calls, one reply…</div></div>
+</div>
+
+
+<h2>3. Trajectory</h2>
+<p class="verdict v-part">your answer: right shape, missing the reason</p>
+<p class="sub">You said it's the path — source → reason → lookup → reason → reply. Correct.
+But you framed it as "important to evaluate and answer". Here's the sharper reason it matters.</p>
+
+<p><b>The answer and the path can be right or wrong independently.</b> Four combinations exist, and
+three of them are failures that a scorer looking only at the final reply will completely miss:</p>
+
+<table>
+  <tr><th></th><th>Path was right</th><th>Path was wrong</th></tr>
+  <tr>
+    <td class="crit"><b>Answer right</b></td>
+    <td style="color:var(--good)"><b>Genuinely fine</b></td>
+    <td><b>Looks fine, isn't.</b> Cancelled the booking without ever confirming identity.
+      Right outcome, dangerous process. Happened to work this time.</td>
+  </tr>
+  <tr>
+    <td class="crit"><b>Answer wrong</b></td>
+    <td><b>Blameless but still failed.</b> Did everything correctly, the cancellation API
+      returned an error, user didn't get cancelled.</td>
+    <td style="color:var(--bad)"><b>Obviously broken</b></td>
+  </tr>
+</table>
+
+<div class="note">
+  <b>This is why agent eval exists as a separate discipline</b>
+  For a chatbot, the reply <i>is</i> the product, so scoring the reply is enough.
+  For an agent, the reply is one artifact of a path — and the path can confirm no identity,
+  call a destructive tool twice, or skip a required check, while the reply reads perfectly.
+  You will meet exactly this in our own traces.
+</div>
+
+
+<h2>4. Rubric</h2>
+<p class="verdict v-part">your answer: strong — better than most first attempts</p>
+<p class="sub">You said: a set of criteria, like <i>did the agent confirm identity</i>,
+<i>did the cancellation API error</i>, <i>did the agent inform the user of the refund amount</i>.
+The criteria instinct is right, and your criteria are specific and checkable, which is the hard part.
+Two gaps.</p>
+
+<p><b>Gap 1 — criteria are only half of a rubric. The other half is levels:</b> what each possible
+score actually means, so two different reviewers reach the same verdict.
+Your criteria with levels added:</p>
+
+<table>
+  <tr><th style="width:42%">Criterion</th><th>Pass</th><th>Fail</th></tr>
+  <tr>
+    <td class="crit">Confirmed the user's identity before cancelling <span class="pill p-agent">agent</span></td>
+    <td>Asked for and received a booking reference or equivalent <i>before</i> the cancel call</td>
+    <td>Called cancel first, or never asked</td>
+  </tr>
+  <tr>
+    <td class="crit">Told the user the refund amount <span class="pill p-agent">agent</span></td>
+    <td>A specific figure appears in the reply</td>
+    <td>No figure, or vague — "you'll be refunded"</td>
+  </tr>
+  <tr>
+    <td class="crit">Stated the cancellation terms <span class="pill p-agent">agent</span></td>
+    <td>Named the deadline or fee that applied</td>
+    <td>Silent on terms</td>
+  </tr>
+  <tr style="background:var(--tool-bg)">
+    <td class="crit">The cancellation API returned an error <span class="pill p-tool">not the agent</span></td>
+    <td colspan="2" style="color:var(--muted)">⚠️ This one doesn't belong here — see below</td>
+  </tr>
+</table>
+
+<div class="note bad">
+  <b>Gap 2 — one of your criteria scores the wrong actor</b>
+  "Did the cancellation API error" is a <span class="pill p-tool">tool</span> fault, not an
+  <span class="pill p-agent">agent</span> decision. Put it in a rubric that scores the agent and
+  a good agent gets marked down for a backend outage — so the score stops telling you what to fix.<br><br>
+  It is still worth measuring. It just belongs in a different scorer, one that asks
+  "did the user get what they wanted?" rather than "did the agent behave well?".
+  Those two questions genuinely differ, and keeping them apart is what makes a failing score
+  <i>actionable</i>.<br><br>
+  <b>The rule:</b> one rubric, one actor. Decide whether you are grading the agent or the
+  whole system, and don't mix them in the same score.
+</div>
+
+<p class="quote">Notice what your rubric form actually is: a checklist of binary pass/fail criteria,
+rather than a 1–5 quality scale. That is a deliberate style — a <b>checklist rubric</b> — and for
+agent behaviour it is usually the better choice, because "did it confirm identity" has a real
+answer while "how good was this conversation, 1 to 5" does not. You picked the stronger form
+without being told to.</p>
+
+</main>
+</body>
+</html>

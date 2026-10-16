@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One idea</title>
+<style>
+  :root{--bg:#fff;--fg:#18181b;--muted:#6b7280;--line:#d4d4d8;--card:#fafafa;
+        --you:#d97706;--you-bg:#fffbeb;--rule:#0d9488;--rule-bg:#f0fdfa;
+        --no:#dc2626;--no-bg:#fef2f2;--ok:#16a34a;--ok-bg:#f0fdf4;--user:#2563eb;--user-bg:#eff6ff}
+  @media(prefers-color-scheme:dark){:root{--bg:#18181b;--fg:#f4f4f5;--muted:#a1a1aa;--line:#3f3f46;--card:#212124;
+        --you:#fbbf24;--you-bg:#3a2c0c;--rule:#2dd4bf;--rule-bg:#10332f;
+        --no:#f87171;--no-bg:#3b1515;--ok:#4ade80;--ok-bg:#14301d;--user:#60a5fa;--user-bg:#1e293b}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:44px 22px 80px;background:var(--bg);color:var(--fg);
+       font:17px/1.6 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif}
+  main{max-width:740px;margin:0 auto}
+  h1{font-size:26px;letter-spacing:-.02em;margin:0 0 30px}
+  .step{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+        color:var(--muted);margin:38px 0 10px}
+  .box{border:2px solid var(--line);border-radius:12px;padding:16px 19px;margin:10px 0;background:var(--card)}
+  .box .lbl{font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+  .box .big{font-size:17px}
+  .b-user{border-color:var(--user);background:var(--user-bg)} .b-user .lbl{color:var(--user)}
+  .b-you{border-color:var(--you);background:var(--you-bg)}   .b-you .lbl{color:var(--you)}
+  .b-rule{border-color:var(--rule);background:var(--rule-bg)} .b-rule .lbl{color:var(--rule)}
+  .verdict{font-size:22px;font-weight:700;letter-spacing:-.01em}
+  .vf{color:var(--no)} .vp{color:var(--ok)}
+  p{font-size:17px}
+  .punch{font-size:19px;font-weight:600;line-height:1.5;border-left:5px solid var(--no);
+         background:var(--no-bg);padding:18px 22px;border-radius:0 12px 12px 0;margin:30px 0}
+  .q{font-size:17px;border:2px dashed var(--you);border-radius:12px;padding:18px 20px;margin:34px 0 0;
+     background:var(--you-bg)}
+  .q b{display:block;margin-bottom:7px;font-size:15px;color:var(--you);
+       text-transform:uppercase;letter-spacing:.06em}
+  hr{border:none;border-top:1px solid var(--line);margin:40px 0}
+</style>
+</head>
+<body>
+<main>
+
+<h1>One idea. Using one conversation: <code>s05</code>.</h1>
+
+<div class="step">step 1 — what happened</div>
+<div class="box b-user">
+  <div class="lbl">The user asked</div>
+  <div class="big">"What's the per diem for France?"</div>
+</div>
+<div class="box">
+  <div class="lbl">The agent replied</div>
+  <div class="big">"I couldn't find a per diem rate for France. Contact Finance."</div>
+</div>
+
+
+<div class="step">step 2 — you and your rule both said fail</div>
+<div class="box b-you">
+  <div class="lbl">You said</div>
+  <div class="verdict vf">FAIL</div>
+  <div class="big" style="margin-top:6px">Because the France rate <b>does exist</b> — €80 a day.
+  The user walked away with nothing.</div>
+</div>
+<div class="box b-rule">
+  <div class="lbl">Your rule said</div>
+  <div class="verdict vf">FAIL</div>
+  <div class="big" style="margin-top:6px">Because the agent <b>never asked</b> "how many full days
+  and how many travel days?"</div>
+</div>
+
+<p>Same verdict. But look at the two reasons — they are about completely different things. One is
+about a missing number. The other is about a missing question.</p>
+
+
+<hr>
+
+<div class="step">step 3 — the test that shows why that matters</div>
+
+<p>Imagine an engineer reads your rule and fixes the agent so it obeys it.
+Now the agent says:</p>
+
+<div class="box">
+  <div class="lbl">The improved agent replies</div>
+  <div class="big">"How many full days and how many travel days will you have?<br>
+  …I couldn't find a per diem rate for France. Contact Finance."</div>
+</div>
+
+<p>It asks the question. It still has no France rate.</p>
+
+<div class="box b-rule">
+  <div class="lbl">Your rule now says</div>
+  <div class="verdict vp">PASS</div>
+  <div class="big" style="margin-top:6px">The question was asked. Rule satisfied.</div>
+</div>
+<div class="box b-you">
+  <div class="lbl">But in reality</div>
+  <div class="verdict vf">STILL BROKEN</div>
+  <div class="big" style="margin-top:6px">The user <b>still</b> doesn't know France is €80 a day.
+  Nothing that mattered got fixed.</div>
+</div>
+
+<div class="punch">
+  Your rule would report the problem as solved while the user is just as stuck.<br><br>
+  It agreed with you on this conversation — by coincidence. It was never looking at the thing you
+  were looking at.
+</div>
+
+
+<div class="q">
+  <b>Check I explained it</b>
+  In your own words: why is it a problem that your rule said "fail" for a different reason than
+  you did?<br><br>
+  If this still isn't landing, say so and I'll try a different way — no need to work at it.
+</div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your rule scored 100% and is mostly wrong</title>
+<style>
+  :root{--bg:#fff;--fg:#18181b;--muted:#6b7280;--line:#d4d4d8;--card:#fafafa;
+        --you:#d97706;--you-bg:#fffbeb;--rule:#0d9488;--rule-bg:#f0fdfa;
+        --ok:#16a34a;--ok-bg:#f0fdf4;--no:#dc2626;--no-bg:#fef2f2;--dim:#9ca3af}
+  @media(prefers-color-scheme:dark){:root{--bg:#18181b;--fg:#f4f4f5;--muted:#a1a1aa;--line:#3f3f46;--card:#212124;
+        --you:#fbbf24;--you-bg:#3a2c0c;--rule:#2dd4bf;--rule-bg:#10332f;
+        --ok:#4ade80;--ok-bg:#14301d;--no:#f87171;--no-bg:#3b1515;--dim:#6b7280}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:38px 22px 70px;background:var(--bg);color:var(--fg);
+       font:16px/1.55 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif}
+  main{max-width:900px;margin:0 auto}
+  h1{font-size:24px;letter-spacing:-.02em;margin:0 0 5px}
+  .sub{color:var(--muted);margin:0 0 28px;font-size:15px}
+  h2{font-size:18.5px;margin:46px 0 10px;padding-top:20px;border-top:1px solid var(--line)}
+  h2:first-of-type{border-top:none;padding-top:0}
+  p{font-size:15px}
+  code{font-family:ui-monospace,monospace;font-size:12.5px;background:rgba(125,125,125,.16);
+       padding:1px 5px;border-radius:4px}
+
+  .rows{margin:16px 0}
+  .r{display:grid;grid-template-columns:62px 1fr;gap:12px;align-items:center;
+     border:1.5px solid var(--line);border-radius:9px;padding:9px 12px;margin-bottom:6px;
+     background:var(--card);font-size:14px}
+  .r .t{font-family:ui-monospace,monospace;font-weight:700}
+  .r.off{opacity:.45;border-style:dashed}
+  .r.hit{border-color:var(--rule)}
+
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0 4px}
+  @media(max-width:740px){.pair{grid-template-columns:1fr}}
+  .side{border:1.5px solid;border-radius:10px;padding:12px 14px;font-size:14px}
+  .side b{display:block;font-size:11px;font-weight:700;text-transform:uppercase;
+          letter-spacing:.06em;margin-bottom:5px}
+  .side.y{border-color:var(--you);background:var(--you-bg)} .side.y b{color:var(--you)}
+  .side.r2{border-color:var(--rule);background:var(--rule-bg)} .side.r2 b{color:var(--rule)}
+  .same{text-align:center;font-size:13.5px;color:var(--muted);margin:8px 0 0;font-weight:600}
+
+  .case{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:18px 0;background:var(--card)}
+  .case h3{margin:0 0 4px;font-size:16.5px}
+  .case .vb{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.05em;
+             text-transform:uppercase;padding:3px 9px;border-radius:99px;
+             background:var(--ok-bg);color:var(--ok);margin-bottom:9px}
+
+  .note{border-left:4px solid var(--no);background:var(--no-bg);padding:13px 16px;
+        border-radius:0 9px 9px 0;margin:20px 0;font-size:14.5px}
+  .note.you{border-left-color:var(--you);background:var(--you-bg)}
+  .note b.t{display:block;margin-bottom:4px;font-size:15.5px}
+  pre{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:12px 14px;
+      font-size:13px;overflow-x:auto;margin:13px 0}
+</style>
+</head>
+<body>
+<main>
+
+<h1>Your rule scored 3/3 — and is mostly wrong</h1>
+<p class="sub">This is the hardest idea in evaluation, and your rule produced a textbook example of
+it on the first attempt.</p>
+
+
+<h2>First: it only looked at 3 of the 8 traces</h2>
+
+<div class="rows">
+  <div class="r off"><span class="t">s01</span><span>meal limit — no per-diem question. Rule silent.</span></div>
+  <div class="r hit"><span class="t">s02</span><span>per-diem question → <b>rule applies</b></span></div>
+  <div class="r off"><span class="t">s03</span><span>lounge access. Rule silent.</span></div>
+  <div class="r off"><span class="t">s04</span><span>hotel cap. Rule silent.</span></div>
+  <div class="r hit"><span class="t">s05</span><span>per-diem question → <b>rule applies</b></span></div>
+  <div class="r off"><span class="t">s06</span><span>hotel policy check. Rule silent.</span></div>
+  <div class="r hit"><span class="t">s07</span><span>per-diem question in turn 4 → <b>rule applies</b></span></div>
+  <div class="r off"><span class="t">s08</span><span>report contents. Rule silent.</span></div>
+</div>
+
+<div class="note">
+  <b class="t">A trap I deliberately avoided, and you should know it exists</b>
+  I made the rule return <code>n/a</code> on the five traces it does not cover. Had I returned
+  <code>pass</code> instead — which is the lazy default, and extremely common — the scorer would
+  have reported <b>8/8 agreement</b> while actually examining three conversations.<br><br>
+  A scorer must distinguish "I checked and it passed" from "this did not apply to me". Dashboards
+  that conflate the two report healthy numbers for things nobody is measuring.
+</div>
+
+
+<h2>The real problem: right verdict, wrong reason</h2>
+
+<div class="case">
+  <h3><code>s05</code> — France per diem</h3>
+  <span class="vb">both said fail</span>
+  <div class="pair">
+    <div class="side y"><b>why you failed it</b>
+      The user asked for the France rate. It exists — €80/day. They walked away with nothing.</div>
+    <div class="side r2"><b>why your rule failed it</b>
+      The agent did not ask "full days or travel days?" after the per-diem question.</div>
+  </div>
+  <p class="same">Same verdict. Entirely unrelated causes.</p>
+  <p style="font-size:14.5px;margin-top:12px">Now consider the consequence. Make the agent ask
+  "how many full days and travel days?" and <b>the rule passes s05</b> — while the user still gets
+  no France rate. You would have fixed the metric and not the agent.</p>
+</div>
+
+<div class="case">
+  <h3><code>s07</code> — New York claim</h3>
+  <span class="vb">both said fail</span>
+  <div class="pair">
+    <div class="side y"><b>why you failed it</b>
+      The user said "submit all of it" and nothing was submitted. The claim was never filed.</div>
+    <div class="side r2"><b>why your rule failed it</b>
+      In turn 4 the agent did not ask the full-day / travel-day question.</div>
+  </div>
+  <p class="same">Same verdict. And here the rule is not just unrelated — it is wrong.</p>
+  <pre>turn 4 user: "And per diem? I was there 4 days, <b>2 of them travel days</b>."</pre>
+  <p style="font-size:14.5px">The user <b>already supplied the breakdown</b>. Your rule demands the
+  agent ask a question it already has the answer to. Follow this rule and the agent gets
+  <i>worse</i> — it starts asking users to repeat themselves.</p>
+  <p style="font-size:14.5px">Meanwhile the actual failure — the missing submission — is completely
+  invisible to it.</p>
+</div>
+
+<div class="note">
+  <b class="t">Agreement is not validity</b>
+  Your rule agrees with your answer key on every trace it touches, and it is measuring something
+  else. Used to drive improvement it would declare s05 fixed while it stayed broken, and push s07
+  in the wrong direction.<br><br>
+  This is normally Lesson 8 material. It showed up now because you wrote a rule good enough to
+  expose it. <b>Checking the verdict is not enough — you have to check the reason.</b> Which is
+  exactly why I built the scorer to print <i>why</i> it failed rather than just a score.
+</div>
+
+
+<h2>And it is in the wrong column</h2>
+
+<p>Read your two halves again:</p>
+<pre>(a) ...you need to <b>ask</b> for full day, half day travel requests
+(b) ...<b>calculation needs to be done</b> using the calculator tool</pre>
+
+<p>Both describe <b>steps the agent must take</b>. Neither looks at whether the answer was
+correct. That is <code>trajectory</code> — the same column the submit_expense rule lives in.</p>
+
+<p><code>task_completion</code> asks a different question: <i>did the user end up with the right
+thing?</i> Your rule never compares the answer to <code>reference_answers.json</code> at all, so
+it cannot speak to that. An agent could ask the clarifying question, run the calculator, and
+return €999 — your rule passes it.</p>
+
+<div class="note you">
+  <b class="t">One dimension, one question — third appearance</b>
+  Lesson 1: one rubric, one actor. Lesson 2: a dimension that absorbs other dimensions' failures
+  stops being diagnostic. Now: a rule filed under the wrong dimension scores well and measures
+  nothing you asked it to.<br><br>
+  You keep rediscovering this from different directions, which is how it becomes instinct.
+</div>
+
+
+<h2>Your call</h2>
+
+<p>The rule is <b>genuinely good</b> — as a trajectory rule. The clarify-before-calculating
+requirement is a real quality bar and no model is needed to enforce it. Two decisions:</p>
+
+<p><b>1. Re-file it under <code>trajectory</code>?</b> There it joins the submit_expense rule and
+we would have two independent structural checks on the same dimension.</p>
+
+<p><b>2. Amend half (a)?</b> As written it fires even when the user already gave the breakdown.
+The obvious patch is to require the clarifying question <i>only if the user has not already
+stated the split</i> — but say it in your own words and I will implement that instead.</p>
+
+<p>And <code>task_completion</code> still needs a rule. The hint is in the s07 row above: every
+figure in that answer is correct, and the task still failed. So whatever you write cannot look
+only at the answer text.</p>
+
+</main>
+</body>
+</html>

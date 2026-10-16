@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>s02 reviewed — your four claims, checked against the trace</title>
+<style>
+  :root {
+    --bg:#fff; --fg:#18181b; --muted:#6b7280; --line:#d4d4d8; --card:#fafafa;
+    --agent:#7c3aed; --agent-bg:#f5f3ff;
+    --tool:#0d9488;  --tool-bg:#f0fdfa;
+    --human:#d97706; --human-bg:#fffbeb;
+    --bad:#dc2626;   --bad-bg:#fef2f2;
+    --good:#16a34a;  --good-bg:#f0fdf4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#18181b; --fg:#f4f4f5; --muted:#a1a1aa; --line:#3f3f46; --card:#212124;
+      --agent:#a78bfa; --agent-bg:#2a2140;
+      --tool:#2dd4bf;  --tool-bg:#10332f;
+      --human:#fbbf24; --human-bg:#3a2c0c;
+      --bad:#f87171;   --bad-bg:#3b1515;
+      --good:#4ade80;  --good-bg:#14301d;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:40px 24px 80px;background:var(--bg);color:var(--fg);
+       font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif}
+  main{max-width:940px;margin:0 auto}
+  h1{font-size:25px;letter-spacing:-.02em;margin:0 0 6px}
+  h2{font-size:19px;margin:52px 0 6px;padding-top:22px;border-top:1px solid var(--line)}
+  h2:first-of-type{border-top:none;padding-top:0}
+  .sub{color:var(--muted);margin:0 0 26px;font-size:15px}
+  .claim{border:1px solid var(--line);border-left-width:4px;border-radius:0 10px 10px 0;
+         padding:14px 16px;margin:14px 0;background:var(--card)}
+  .claim h3{margin:0 0 2px;font-size:15px;font-weight:600}
+  .claim .said{font-style:italic;color:var(--muted);font-size:14px;margin:2px 0 10px}
+  .claim p{margin:8px 0 0;font-size:14.5px}
+  .c-no{border-left-color:var(--bad)}  .c-no .badge{background:var(--bad-bg);color:var(--bad)}
+  .c-ok{border-left-color:var(--good)} .c-ok .badge{background:var(--good-bg);color:var(--good)}
+  .c-pref{border-left-color:var(--human)} .c-pref .badge{background:var(--human-bg);color:var(--human)}
+  .badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;
+         text-transform:uppercase;padding:3px 9px;border-radius:99px;margin-bottom:7px}
+
+  .map{display:grid;grid-template-columns:1fr 54px 1fr;gap:10px;align-items:center;margin:22px 0}
+  @media(max-width:760px){.map{grid-template-columns:1fr;gap:6px}.map .mid{display:none}}
+  .mhead{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+  .fact{border:1.5px solid var(--agent);background:var(--agent-bg);border-radius:9px;padding:10px 13px;font-size:14px}
+  .mid{text-align:center;color:var(--muted);font-size:19px}
+  .src{border:1.5px solid;border-radius:9px;padding:10px 13px;font-size:13.5px}
+  .src.ok{border-color:var(--tool);background:var(--tool-bg)}
+  .src.no{border-color:var(--bad);background:var(--bad-bg);border-style:dashed}
+  .src code{font-size:12.5px;background:rgba(125,125,125,.16);padding:1px 5px;border-radius:4px}
+  .src b{display:block;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+  .src.ok b{color:var(--tool)} .src.no b{color:var(--bad)}
+
+  .note{border-left:4px solid var(--human);background:var(--human-bg);padding:14px 16px;
+        border-radius:0 9px 9px 0;margin:20px 0;font-size:14.5px}
+  .note.bad{border-left-color:var(--bad);background:var(--bad-bg)}
+  .note.good{border-left-color:var(--good);background:var(--good-bg)}
+  .note b.t{display:block;margin-bottom:4px;font-size:15px}
+  table{border-collapse:collapse;width:100%;margin:18px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:var(--card);font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .score{font-variant-numeric:tabular-nums;font-weight:700}
+</style>
+</head>
+<body>
+<main>
+
+<h1>s02 reviewed</h1>
+<p class="sub">Your four claims, each checked against what the trace actually contains.
+Two were right. One was a misreading. One is a style preference. And one of the right ones
+led somewhere worse.</p>
+
+
+<h2>Your claims, checked</h2>
+
+<div class="claim c-no">
+  <span class="badge">wrong — this is a false positive</span>
+  <h3>1. "It had to be a single line item, but I see three"</h3>
+  <p class="said">Your stated reason for failing the conversation.</p>
+  <p>You were reading real retrieved evidence — <code>travel-02-perdiem#05</code> did come back,
+  and it does say <i>"Per diem is claimed as a single line per trip."</i> Good instinct to check the text.</p>
+  <p>But the scope is narrower than you read it. It means <b>the per-diem claim</b> is one line,
+  rather than itemised per day or per meal. It is not a rule about the whole report.</p>
+  <p>The agent did exactly that: <b>one</b> <code>submit_expense</code> call, €225, one line.
+  The train (€4.20) and the Hotel Adlon night (€198) were <b>already on report R-5567</b> from an
+  earlier, unrelated trip — different expense types, which legitimately coexist on one report.</p>
+  <p><b>This matters more than being wrong.</b> You flagged a passing behaviour as a failure.
+  That is a <b>false positive</b>, and it is the thing that quietly destroys trust in an eval
+  suite — engineers stop believing the dashboard and go back to eyeballing traces. We measure
+  exactly this in Lesson 8.</p>
+</div>
+
+<div class="claim c-pref">
+  <span class="badge">preference, not a defect</span>
+  <h3>2. "The 20% provided-meals rule should have been in the first reply"</h3>
+  <p class="said">…and the search ranking was poor, which is a tool problem not an agent problem.</p>
+  <p><b>Your facts are exactly right.</b> The ranking was genuinely bad:</p>
+  <table>
+    <tr><th>rank</th><th>relevance</th><th>chunk</th><th>section</th></tr>
+    <tr><td>1</td><td class="score">0.2355</td><td><code>travel-02-perdiem#04</code></td><td>Provided meals — the 20% rule</td></tr>
+    <tr><td>2</td><td class="score">0.1956</td><td><code>travel-02-perdiem#05</code></td><td>Claiming</td></tr>
+    <tr><td>3</td><td class="score">0.1601</td><td><code>travel-02-perdiem#02</code></td><td>Daily rates — <b>the thing actually asked for</b></td></tr>
+  </table>
+  <p>The rule the user did not ask about outranked the rates table they did. And your
+  tool-versus-agent attribution is right again.</p>
+  <p>On the substance though: the agent <b>did</b> give the 20% caveat — in turn 2, attached to the
+  actual number. Turn 1 asked a clarifying question instead. I would argue turn 2 is the better
+  place, because a caveat on a figure that does not exist yet is noise. But this is your answer key,
+  so it is your call — just record it as a <b>preference</b>, not a failure.</p>
+</div>
+
+<div class="claim c-ok">
+  <span class="badge">correct — you found a real one</span>
+  <h3>3. "The €15 local-transport figure was nowhere in the tool output"</h3>
+  <p>Verified. The string <code>15</code> appears <b>nowhere</b> in any of the three retrieved chunks.
+  That figure lives in <code>travel-02-perdiem#01</code> — which was never retrieved, in any turn
+  of this session.</p>
+</div>
+
+<div class="claim c-ok">
+  <span class="badge">correct — also real</span>
+  <h3>4. "Nowhere in the results did it say hotels are claimed separately"</h3>
+  <p>Verified, and subtler than claim 3. The word <i>hotel</i> <b>does</b> appear in the retrieved
+  text — but only inside the 20% rule, as <i>"included in the hotel rate"</i>. That is a different
+  statement entirely.</p>
+  <p>The sentence <i>"Per diem does not cover hotel accommodation. Hotels are claimed separately"</i>
+  is in <code>travel-02-perdiem#01</code>. Not retrieved.</p>
+  <p>Catching this required reading the retrieved text closely enough to notice that a matching
+  <i>word</i> is not a matching <i>claim</i>. That is the exact failure mode of naive keyword-based
+  groundedness checking, and you found it by hand.</p>
+</div>
+
+
+<h2>Where your claim 3 led: it is worse than you said</h2>
+<p class="sub">Checking your two finds, I took the agent's first reply apart claim by claim.
+Four factual statements. <b>One</b> is supported by what it retrieved.</p>
+
+<div class="map">
+  <div class="mhead">What the agent stated</div><div class="mid"></div><div class="mhead">Was it in the retrieved text?</div>
+
+  <div class="fact">"Germany is <b>EUR 75 per day</b>"</div>
+  <div class="mid">→</div>
+  <div class="src ok"><b>supported</b><code>travel-02-perdiem#02</code>, retrieved at rank 3</div>
+
+  <div class="fact">"Departure and return days are reimbursed at <b>50% of the daily rate</b>"</div>
+  <div class="mid">→</div>
+  <div class="src no"><b>not retrieved</b>Lives in <code>#03 Travel days</code>. Never returned.
+    <code>50%</code>, <code>departure</code>, <code>return</code> — none appear.</div>
+
+  <div class="fact">"Covers incidentals like local transport <b>under EUR 15 a journey</b>"</div>
+  <div class="mid">→</div>
+  <div class="src no"><b>not retrieved</b>Lives in <code>#01</code>. Your find.</div>
+
+  <div class="fact">"Does <b>not cover your hotel</b>, which is claimed separately"</div>
+  <div class="mid">→</div>
+  <div class="src no"><b>not retrieved</b>Lives in <code>#01</code>. Your find.</div>
+</div>
+
+<div class="note bad">
+  <b class="t">The one you did not reach is the most serious</b>
+  The <b>50% travel-day rule was never retrieved either</b> — and the entire €225 figure is built
+  on it. Two full days at €75 plus two half days at €37.50. The arithmetic is correct and the rule
+  is genuinely company policy, but <b>the agent could not have known it from anything in front of
+  it.</b><br><br>
+  So the number the user will claim against rests on an unverifiable assertion. Every fact is
+  <i>true of the corpus</i>; three of four were <i>not in the agent's context when it said them</i>.
+  For a real agent that means it was reciting from pretrained memory, not from the documents — and
+  you cannot tell the difference from the trace. That is the whole problem.
+</div>
+
+<div class="note good">
+  <b class="t">My error, and you found the thread</b>
+  I wrote s02's answers from my own knowledge of the corpus rather than strictly from what the
+  search returned — which is <i>precisely</i> the failure real agents have. I reproduced it by
+  accident and then listed s02 as clean in my answer key. <b>My answer key was wrong.</b><br><br>
+  You caught it by cross-checking every claim in the answer against the retrieved evidence, line by
+  line. That procedure has a name — <b>faithfulness</b>, or claim-level groundedness — and it is
+  the whole of Lesson 5. You ran it manually, unprompted, three lessons early.
+</div>
+
+
+<h2>So what is the verdict?</h2>
+<p class="sub">Your call. Here is the honest state of it.</p>
+
+<table>
+  <tr><th>Dimension</th><th>Assessment</th></tr>
+  <tr><td><b>Did the user get the right outcome?</b></td>
+      <td style="color:var(--good)"><b>Yes.</b> €225 is the correct figure under policy. The clarifying
+      question was necessary and well-judged. Submission happened only after an explicit request.</td></tr>
+  <tr><td><b>Was the path right?</b></td>
+      <td style="color:var(--good)"><b>Yes.</b> search → calculate → look up report → submit.
+      Exactly the tools you predicted, in a sensible order.</td></tr>
+  <tr><td><b>Was the answer grounded in its sources?</b></td>
+      <td style="color:var(--bad)"><b>No.</b> Three of four factual claims were absent from
+      everything it retrieved — including the rule the final number depends on.</td></tr>
+</table>
+
+<div class="note">
+  <b class="t">Notice what just happened to the format</b>
+  One verdict field cannot hold this. "Pass" hides a real grounding problem; "fail" hides that the
+  task was done correctly and helpfully.<br><br>
+  Real eval suites resolve this by scoring <b>several named dimensions separately</b> rather than
+  emitting one number — and that structure is not a nicety, it is forced on you by traces exactly
+  like this one. You have just derived the reason multi-metric scoring exists, by hitting the wall
+  that makes single-verdict labelling insufficient.
+</div>
+
+</main>
+</body>
+</html>

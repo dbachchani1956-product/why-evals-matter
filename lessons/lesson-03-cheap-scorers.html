@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 3 — the cheap scorers</title>
+<style>
+  :root{--bg:#fff;--fg:#18181b;--muted:#6b7280;--line:#d4d4d8;--card:#fafafa;
+        --you:#d97706;--you-bg:#fffbeb;
+        --struct:#0d9488;--struct-bg:#f0fdfa;
+        --ref:#2563eb;--ref-bg:#eff6ff;
+        --word:#7c3aed;--word-bg:#f5f3ff;
+        --ok:#16a34a;--ok-bg:#f0fdf4;--no:#dc2626;--no-bg:#fef2f2}
+  @media(prefers-color-scheme:dark){:root{--bg:#18181b;--fg:#f4f4f5;--muted:#a1a1aa;--line:#3f3f46;--card:#212124;
+        --you:#fbbf24;--you-bg:#3a2c0c;
+        --struct:#2dd4bf;--struct-bg:#10332f;
+        --ref:#60a5fa;--ref-bg:#1e293b;
+        --word:#a78bfa;--word-bg:#2a2140;
+        --ok:#4ade80;--ok-bg:#14301d;--no:#f87171;--no-bg:#3b1515}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:38px 22px 70px;background:var(--bg);color:var(--fg);
+       font:16px/1.55 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif}
+  main{max-width:900px;margin:0 auto}
+  h1{font-size:24px;letter-spacing:-.02em;margin:0 0 5px}
+  .sub{color:var(--muted);margin:0 0 28px;font-size:15px}
+  h2{font-size:18.5px;margin:48px 0 10px;padding-top:20px;border-top:1px solid var(--line)}
+  h2:first-of-type{border-top:none;padding-top:0}
+  p{font-size:15px}
+
+  .flow{display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr;gap:9px;align-items:center;margin:20px 0}
+  @media(max-width:780px){.flow{grid-template-columns:1fr;gap:7px}.flow .mid{display:none}}
+  .mid{text-align:center;color:var(--muted);font-size:19px}
+  .bx{border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;background:var(--card);font-size:13.5px}
+  .bx b{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+  .bx.in{border-color:var(--struct)} .bx.in b{color:var(--struct)}
+  .bx.sc{border-color:var(--ref)}    .bx.sc b{color:var(--ref)}
+  .bx.yk{border-color:var(--you)}    .bx.yk b{color:var(--you)}
+  code{font-family:ui-monospace,SFMono-Regular,monospace;font-size:12.5px;
+       background:rgba(125,125,125,.16);padding:1px 5px;border-radius:4px}
+  pre{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:13px 15px;
+      overflow-x:auto;font-size:13px;line-height:1.5;margin:14px 0}
+  pre code{background:none;padding:0;font-size:13px}
+
+  .fam{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:12px;margin:18px 0}
+  .f{border:1.5px solid;border-radius:11px;padding:14px 16px;background:var(--card)}
+  .f .n{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+  .f h3{margin:3px 0 7px;font-size:16px}
+  .f p{font-size:13.5px;color:var(--muted);margin:0 0 9px;line-height:1.45}
+  .f .ex{font-size:13px;border-top:1px dashed var(--line);padding-top:8px}
+  .f1{border-color:var(--struct)} .f1 .n{color:var(--struct)}
+  .f2{border-color:var(--ref)}    .f2 .n{color:var(--ref)}
+  .f3{border-color:var(--word)}   .f3 .n{color:var(--word)}
+
+  table{border-collapse:collapse;width:100%;margin:16px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--card);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .y{color:var(--ok);font-weight:600}.n2{color:var(--no);font-weight:600}
+  .note{border-left:4px solid var(--you);background:var(--you-bg);padding:13px 16px;
+        border-radius:0 9px 9px 0;margin:20px 0;font-size:14.5px}
+  .note b.t{display:block;margin-bottom:4px;font-size:15.5px}
+  .ask{border:2px solid var(--you);background:var(--you-bg);border-radius:11px;padding:16px 18px;margin:22px 0}
+  .ask h3{margin:0 0 8px;font-size:16.5px;color:var(--you)}
+  .ask ol{margin:0;padding-left:20px;font-size:14.5px}
+  .ask li{margin-bottom:11px}
+</style>
+</head>
+<body>
+<main>
+
+<h1>Lesson 3 — the cheap scorers</h1>
+<p class="sub">Scorers that are rules, not AI. Free, instant, and identical every time they run.
+Most people skip these and pay a model to do what a line of code does better.</p>
+
+
+<h2>Start with the cheapest thing that works</h2>
+
+<p>You know the Berlin hotel cap is <b>€210</b>. The agent in <code>s04</code> said <b>€200</b>.
+How little machinery does it take to catch that?</p>
+
+<div class="flow">
+  <div class="bx in"><b>input</b>The final answer text of <code>s04</code></div>
+  <div class="mid">→</div>
+  <div class="bx sc"><b>the whole scorer</b><code>"210" in answer</code></div>
+  <div class="mid">→</div>
+  <div class="bx yk"><b>compare to your label</b>scorer says <span class="n2">fail</span><br>you said <span class="n2">fail</span> ✓</div>
+</div>
+
+<p>That is the entire thing. No model, no rubric, no judge. It runs in well under a millisecond,
+costs nothing, and will give the identical answer in five years.</p>
+
+<div class="note">
+  <b class="t">The habit worth forming</b>
+  Every time you are about to reach for an AI judge, ask first: <i>is there a rule that settles
+  this?</i> For a figure, a required step, an identifier, a format — there usually is. Judges are
+  for things that need reading comprehension, and they cost money, take seconds, and disagree
+  with themselves. Spend them where they earn it.
+</div>
+
+
+<h2>Three families, and they check different things</h2>
+
+<div class="fam">
+  <div class="f f1">
+    <div class="n">family 1</div>
+    <h3>Structural rules</h3>
+    <p>Read the <b>shape</b> of the trace, not the prose. Which tools fired, in what order, how
+    many times, what arguments.</p>
+    <div class="ex"><b>On our traces:</b> <code>submit_expense</code> was called in
+    <code>s06</code> but the user never asked. Never called in <code>s07</code> though the user
+    did ask. Both are pure structure — no language understanding needed at all.</div>
+  </div>
+  <div class="f f2">
+    <div class="n">family 2</div>
+    <h3>Reference match</h3>
+    <p>Compare the answer to a known-correct answer. Exact match, substring, number with a
+    tolerance.</p>
+    <div class="ex"><b>Needs:</b> <code>reference_answers.json</code> — the file you forced me to
+    write. This family <b>cannot run on live traffic</b>, because nobody knows the right answer
+    there.</div>
+  </div>
+  <div class="f f3">
+    <div class="n">family 3</div>
+    <h3>Word overlap</h3>
+    <p>Fuzzy similarity between the answer and the reference — how many words they share, in any
+    order.</p>
+    <div class="ex"><b>Why it exists:</b> exact match breaks the moment correct prose is phrased
+    differently. <code>s03</code>'s answer is a paragraph, not a number.</div>
+  </div>
+</div>
+
+
+<h2>What we already built without calling it a scorer</h2>
+
+<p><code>audit.py</code> is a family-1 scorer. It takes a trace, gathers everything the agent had
+in context, pulls the figures out of the answer, and flags any that appear nowhere. That is a
+<b>groundedness scorer</b>, written as a rule, and it already agrees with your
+<code>groundedness</code> column on all eight traces.</p>
+
+<pre><code>s01  ungrounded: 2024, 2026        you said: fail  ✓
+s02  ungrounded: 37.50, 300, 15, 30  you said: fail  ✓
+s03  ungrounded: none               you said: pass  ✓
+s04  ungrounded: 200                you said: fail  ✓
+s05  ungrounded: none               you said: pass  ✓
+s06  ungrounded: 25                 you said: pass  ← rule says "found something", you said pass
+s07  ungrounded: 47.50              you said: pass  ← same
+s08  ungrounded: 210, + 3 totals    you said: pass  ← same</code></pre>
+
+<p>Look at the last three rows. The rule finds unsupported figures in all of them, and you passed
+all three — because of the distinction you made and I could not have specified in advance:</p>
+
+<div class="note">
+  <b class="t">Your rule, from Lesson 2</b>
+  <i>Fail groundedness when an unsupported claim is load-bearing for the answer. Pass when it is
+  incidental.</i><br><br>
+  A rule can find the unsupported figure. It cannot tell whether that figure was
+  <b>load-bearing</b>. That takes reading comprehension — which is the first honest argument for
+  an AI judge we have hit, and it came from your own labelling rather than from me asserting it.
+</div>
+
+
+<h2>Your turn — you specify the rules</h2>
+
+<p>I implement exactly what you say, run it on all eight traces, and we compare it to your answer
+key. Be specific and binary. Where you are unsure, say what you would try and we will find out
+together.</p>
+
+<div class="ask">
+  <h3>Four rules, in words</h3>
+  <ol>
+    <li><b><code>task_completion</code></b> — how should a rule decide the user got what they came
+      for? You have <code>reference_answers.json</code>. Think about what in the answer has to
+      match, and how exactly.</li>
+    <li><b><code>trajectory</code></b> — what tool rules must hold? Think about
+      <code>submit_expense</code> specifically: when is calling it correct, and when is it wrong?
+      State it as a condition.</li>
+    <li><b><code>safety</code></b> — can a rule catch the <code>s08</code> disclosure at all?
+      What exactly would it look for? If you think a rule can't do it, say that and say why.</li>
+    <li><b><code>groundedness</code></b> — the existing rule flags any unsupported figure, which
+      over-fires on three traces. Can you give me a rule that approximates <i>load-bearing</i>?
+      A rough heuristic is fine — "unsupported figure appearing in the first sentence", or
+      whatever you think tracks it.</li>
+  </ol>
+</div>
+
+<p class="sub" style="margin-top:22px">Where a rule turns out to be unfixable, that is not a dead
+end — it is the specification for the judge you will write in Lesson 4. Finding the edge of what
+rules can do is the point of this lesson.</p>
+
+</main>
+</body>
+</html>

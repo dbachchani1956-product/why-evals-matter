@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Evals, Step by Step</title>
+<meta name="description" content="A step-by-step guide to evaluating AI agents, by Deepak Bachchani. Learn the vocabulary, judge real agent conversations, and build the checks yourself.">
+<meta property="og:title" content="Evals, step by step">
+<meta property="og:description" content="Learn how AI agents are evaluated by judging real conversations yourself. A guide by Deepak Bachchani.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="../shared/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;650;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="topbar">
+  <button class="iconbtn" id="menu-open" type="button" aria-controls="sidebar" aria-expanded="false">Steps</button>
+  <span class="where" id="where"></span>
+  <button class="iconbtn" id="convos-open" type="button" aria-controls="convos" aria-expanded="false">Conversations</button>
+</div>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <b>Evals, step by step</b>
+      <span>A guide by Deepak Bachchani</span>
+    </div>
+    <div class="progress">
+      <span id="progress-text">Step 1 of 12</span>
+      <div class="bar"><i id="progress-bar"></i></div>
+    </div>
+    <nav aria-label="Steps"><ol id="toc"></ol></nav>
+    <button class="iconbtn" id="menu-close" type="button" hidden>Close</button>
+  </aside>
+
+  <main class="content" id="content">
+
+<!-- ===================================================== 1 -->
+<section class="step" data-step="1" data-part="Start here" data-title="Why evals exist">
+  <span class="kicker">Step 1 · about 2 minutes</span>
+  <h1>Two answers from the same AI agent. One is made up.</h1>
+  <p class="lead">This guide teaches you how AI agents are evaluated, using one small agent and the
+    conversations it had. You'll judge them yourself as you go. It starts with a test.</p>
+  <p>The agent is an expense assistant. Employees ask it about company travel policy, and it can
+    search the policy documents, do arithmetic, and file expense claims. Here are two of its
+    answers. Both searched the policy, both are confident, and both name a source.</p>
+  <div class="grid2" id="hook-pair"></div>
+  <div class="check">
+    <p class="q">One of these answers contains a figure the agent invented. Which one?</p>
+    <div class="choices">
+      <button class="btn" type="button" id="hook-a">Answer A</button>
+      <button class="btn" type="button" id="hook-b">Answer B</button>
+    </div>
+    <div class="reveal" id="hook-reveal" hidden>
+      <p class="feedback" id="hook-feedback"></p>
+      <p><strong>Answer B is made up.</strong> It says the Berlin hotel cap is EUR 200. The real cap
+        is EUR 210. Look at what its search returned: three sections about <em>meal</em> limits.
+        No hotel figure appears in any of them, so the agent invented a number and named a source
+        it never saw.</p>
+      <p>Now compare the shape of the two conversations. Both: the user asks, the agent searches,
+        the agent answers with a source. They are identical from the outside.</p>
+    </div>
+  </div>
+  <div class="callout key">
+    <span class="label">The point of this guide</span>
+    <p>Being able to see what an agent did doesn't tell you whether it was right. Recording
+      everything is called <strong>observability</strong>. Deciding whether it was right is
+      <strong>evaluation</strong>. You need both, and they're different jobs. The rest of this
+      guide is about the second one.</p>
+  </div>
+</section>
+
+<!-- ===================================================== 2 -->
+<section class="step" data-step="2" data-part="The vocabulary" data-title="What an agent leaves behind" hidden>
+  <span class="kicker">Step 2 · about 3 minutes</span>
+  <h1>What an agent leaves behind: traces, spans and turns</h1>
+  <p class="lead">Before you can judge an agent, you need a record of what it did. Every eval tool
+    uses the same four words for that record.</p>
+  <p>Here is <a href="#c2" data-convo="2">conversation 2</a>, drawn as a tree. An employee asks about their daily
+    allowance for a Berlin trip. The conversation runs over three messages from the user.</p>
+  <div id="s02-tree"></div>
+  <dl class="term"><dt>Turn</dt><dd>One message from the user, plus everything the agent did in
+    response. The conversation above has three turns.</dd></dl>
+  <dl class="term"><dt>Span</dt><dd>One step inside a turn: a thought, a tool call or a reply.
+    Turn 3 above has two spans that are tool calls (look up the report, file the claim) and one
+    that is the reply.</dd></dl>
+  <dl class="term"><dt>Session</dt><dd>The whole conversation from start to finish. The agent
+    remembers earlier turns, so turn 2 ("two full days and two travel days") only makes sense
+    because of turn 1.</dd></dl>
+  <dl class="term"><dt>Trace</dt><dd>The recorded file of a session: every turn and every span, in
+    order, with what went in and what came out. A trace is what you send to an eval platform.</dd></dl>
+  <div class="callout mistake">
+    <span class="label">Common mistake</span>
+    <p>Platforms use "trace" and "session" in slightly different ways. Some store one trace per
+      turn and group them into a session; others store the whole conversation as one trace. When
+      two documentation pages seem to contradict each other, this is usually why.</p>
+  </div>
+  <div class="check" data-check>
+    <p class="q">In the conversation above, the agent looked up a report and then filed a claim.
+      What is each of those?</p>
+    <div class="options">
+      <button class="opt" type="button" data-correct>A span</button>
+      <button class="opt" type="button">A turn</button>
+      <button class="opt" type="button">A session</button>
+    </div>
+    <p class="feedback" hidden data-yes="Right. Each tool call is one span. Both of them sit inside turn 3." data-no="Not quite. A turn is the whole response to one user message. Each tool call inside it is a span, so these are two spans inside turn 3."></p>
+  </div>
+</section>
+
+<!-- ===================================================== 3 -->
+<section class="step" data-step="3" data-part="The vocabulary" data-title="The path matters" hidden>
+  <span class="kicker">Step 3 · about 3 minutes</span>
+  <h1>Why the path matters as much as the answer</h1>
+  <p class="lead">For a chatbot, the reply is the whole product. An agent takes actions, so the
+    steps it took can be wrong even when its reply is right.</p>
+  <p>This is <a href="#c6" data-convo="6">conversation 6</a>. An employee asks a quick question before booking a hotel. Read the whole thing, including
+    the tool calls.</p>
+  <div id="s06-convo"></div>
+  <p>The reply is correct: EUR 190 is under the EUR 210 cap, and three nights is EUR 570. But the
+    user said "just checking before I book anything", and the agent <strong>filed a EUR 570
+    expense claim</strong> for a trip that hasn't happened.</p>
+  <dl class="term"><dt>Trajectory</dt><dd>The sequence of steps the agent took, separate from what it
+    concluded. Here the trajectory was: search, calculate, file a claim. The last step was never
+    requested.</dd></dl>
+  <p>The answer and the path can each be right or wrong, which gives four combinations:</p>
+  <div class="tw"><table>
+    <thead><tr><th></th><th>Path right</th><th>Path wrong</th></tr></thead>
+    <tbody>
+      <tr><th>Answer right</th><td>Genuinely good</td><td><strong>Looks good, isn't.</strong> This conversation.</td></tr>
+      <tr><th>Answer wrong</th><td>Did everything right, still failed, e.g. a system was down</td><td>Obviously broken</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout mistake">
+    <span class="label">Common mistake</span>
+    <p>Reading only the agent's final message. Two of the four combinations above look fine if you
+      do that, and one of them takes real actions nobody asked for.</p>
+  </div>
+  <div class="check" data-check>
+    <p class="q">What would you need to look at to catch this problem?</p>
+    <div class="options">
+      <button class="opt" type="button">How well the reply is written</button>
+      <button class="opt" type="button" data-correct>Which tools the agent called, compared with what the user asked for</button>
+      <button class="opt" type="button">Whether the numbers in the reply are correct</button>
+    </div>
+    <p class="feedback" hidden data-yes="Right. The reply and its numbers are both fine. The problem only shows up in the list of tool calls." data-no="The reply is well written and its numbers are correct, so neither would catch it. The problem is only visible in the tool calls: a claim was filed that the user never asked for."></p>
+  </div>
+</section>
+
+<!-- ===================================================== 4 -->
+<section class="step" data-step="4" data-part="The vocabulary" data-title="Labels: the answer key" hidden>
+  <span class="kicker">Step 4 · about 3 minutes</span>
+  <h1>Labels: deciding what "good" means before you measure it</h1>
+  <p class="lead">Every eval needs something to check against. That something is a person's
+    verdict, written down in advance.</p>
+  <dl class="term"><dt>Label</dt><dd>A person's verdict on a trace: did it pass or fail, and why, in
+    one line. A set of labels is your answer key. Some tools call it <em>ground truth</em>.</dd></dl>
+  <p>For <a href="#c6" data-convo="6">conversation 6</a> in step 3, a label looks like this:</p>
+  <div class="box soft">
+    <span class="label">Label for conversation 6</span>
+    <p><span class="pill fail">fail</span> &nbsp;Answered correctly, then filed a claim for a trip
+      that hasn't happened. The user said they were only checking.</p>
+  </div>
+  <div class="callout mistake">
+    <span class="label">Common mistake</span>
+    <p>The word "label" has two meanings. In everyday software, a label is a tag like
+      <em>booking</em> or <em>cancellation</em> that says what kind of conversation it was. That's
+      useful for filtering, but it says nothing about quality. In evaluation, a label is the
+      <strong>verdict</strong>. Documentation often doesn't say which one it means.</p>
+  </div>
+  <h2>One verdict per conversation isn't enough</h2>
+  <p><a href="#c6" data-convo="6">Conversation 6</a> got the answer right and the action wrong. A single pass or fail can't
+    say both. So label each conversation on several separate questions:</p>
+  <div class="tw"><table>
+    <thead><tr><th>Question</th><th>What it asks</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Task completion</strong></td><td>Did the user end up with what they came for?</td></tr>
+      <tr><td><strong>Trajectory</strong></td><td>Did the agent take the right steps, and nothing it shouldn't have?</td></tr>
+      <tr><td><strong>Groundedness</strong></td><td>Did it stick to what its sources said?</td></tr>
+      <tr><td><strong>Safety</strong></td><td>Did it reveal or do anything it shouldn't?</td></tr>
+    </tbody>
+  </table></div>
+  <p>Here is the answer key for all eight conversations. Select a row to read that conversation.</p>
+  <div class="tw" id="label-grid"></div>
+  <div class="callout key">
+    <span class="label">Two checks on your own answer key</span>
+    <p>Every column should contain both passes and fails. A column that's all "pass" can't tell
+      good from bad, so nothing can be measured against it. And some questions can't be answered
+      from the conversation alone: to say the user didn't get the right answer, you need to know
+      what the right answer was.</p>
+  </div>
+  <div class="check" data-check>
+    <p class="q">Why write labels before building any automatic check?</p>
+    <div class="options">
+      <button class="opt" type="button">Labels make the checks run faster</button>
+      <button class="opt" type="button" data-correct>Without them, there's no way to tell whether a check is right</button>
+      <button class="opt" type="button">Eval platforms require them before they'll start</button>
+    </div>
+    <p class="feedback" hidden data-yes="Right. A score with nothing to compare against can't be shown to be right or wrong." data-no="The real reason: a check produces a number, and without your verdicts there's nothing to compare that number against. You'd have no way to know if it's measuring anything."></p>
+  </div>
+</section>
+
+<!-- ===================================================== 5 -->
+<section class="step" data-step="5" data-part="The vocabulary" data-title="Scorers, rubrics and judges" hidden>
+  <span class="kicker">Step 5 · about 3 minutes</span>
+  <h1>Scorers, rubrics and judges</h1>
+  <p class="lead">Labelling every conversation by hand doesn't scale. So you build checks that
+    produce verdicts automatically, and test them against your labels.</p>
+  <dl class="term"><dt>Scorer</dt><dd>Anything that takes a trace and produces a verdict. Also called
+    a <em>metric</em> or an <em>evaluator</em>.</dd></dl>
+  <p>There are two kinds, and the difference is who does the checking:</p>
+  <div class="grid2">
+    <div class="box">
+      <span class="label">Rule</span>
+      <p>Written so a <strong>computer</strong> can check it by matching words, looking up which tools
+        ran, or comparing numbers.</p>
+      <p class="mono" style="font-size:13px">IF the agent filed a claim<br>THEN the user must have asked for it</p>
+      <p style="color:var(--muted);font-size:14px">Free, instant, and gives the same answer every time.</p>
+    </div>
+    <div class="box">
+      <span class="label">Rubric</span>
+      <p>Written so a <strong>reader</strong> can apply it: a person, or an AI model.</p>
+      <p class="mono" style="font-size:13px">Fail if a claim the answer depends on<br>isn't in the documents it found</p>
+      <p style="color:var(--muted);font-size:14px">Costs money, takes seconds, and can vary between runs.</p>
+    </div>
+  </div>
+  <dl class="term"><dt>Judge</dt><dd>An AI model used as a scorer, following a rubric. Often called
+    <em>LLM-as-judge</em>.</dd></dl>
+  <h2>What makes a good rubric</h2>
+  <p>Compare two rubrics for the same simple question, "is this answer concise?":</p>
+  <div class="grid2">
+    <div class="box">
+      <span class="pill fail">weak</span>
+      <p class="mono" style="font-size:13px">Rate how concise this answer is, from 1 to 10.</p>
+      <p style="font-size:14px">You get back "7". Nobody can say what would make it an 8, so nobody
+        can fix anything, and next week the same answer might get an 8.</p>
+    </div>
+    <div class="box">
+      <span class="pill pass">strong</span>
+      <p class="mono" style="font-size:13px">PASS: every paragraph is needed to answer the question.<br>FAIL: at least one paragraph wasn't asked for.<br>List each paragraph first, then give the verdict.</p>
+      <p style="font-size:14px">You get the same verdict each time, and if it fails you know which paragraph to cut.</p>
+    </div>
+  </div>
+  <p>A strong rubric has three parts: <strong>criteria</strong> (what to look at),
+    <strong>levels</strong> (exactly what pass and fail mean), and <strong>reasoning before the
+    verdict</strong>, so the judge works through the evidence instead of justifying a guess.</p>
+  <div class="check" data-check>
+    <p class="q">You want to check that the agent never mentions another employee's report number.
+      Rule or AI judge?</p>
+    <div class="options">
+      <button class="opt" type="button" data-correct>Rule: report numbers can be matched against a list</button>
+      <button class="opt" type="button">AI judge: it needs to understand privacy</button>
+    </div>
+    <p class="feedback" hidden data-yes="Right. Find every report number in the answer and compare it with the user's own. No reading comprehension needed, so a rule does it for free." data-no="A rule handles this: find every report number in the answer and compare it with the user's own list. Save AI judges for checks that genuinely need reading comprehension."></p>
+  </div>
+</section>
+
+<!-- ===================================================== 6 -->
+<section class="step" data-step="6" data-part="Practice" data-title="You be the judge" hidden>
+  <span class="kicker">Step 6 · about 3 minutes</span>
+  <h1>You be the judge</h1>
+  <p class="lead">You know the vocabulary. Now try labelling two conversations yourself. Both look
+    like good work. Decide before you read the verdict.</p>
+  <div id="practice"></div>
+</section>
+
+<!-- ===================================================== 7 -->
+<section class="step" data-step="7" data-part="Building evals" data-title="Start with rules" hidden>
+  <span class="kicker">Step 7 · about 3 minutes</span>
+  <h1>Start with rules, not AI</h1>
+  <p class="lead">The cheapest check that works is the right one. Most teams reach for an AI judge
+    first. In this project, plain rules did most of the work.</p>
+  <p>A rule is one sentence: <strong>IF</strong> something you can point at in the trace,
+    <strong>THEN</strong> something must or must not be true. Three rules, tested against the answer
+    key from step 4:</p>
+  <div class="tw" id="rule-table"></div>
+  <p>Look at how the filing rule needs two halves. The first half catches <a href="#c6" data-convo="6">conversation 6</a>,
+    which filed a claim nobody asked for. The second catches <a href="#c7" data-convo="7">conversation 7</a>,
+    which was asked to file and didn't. Writing only one half, with only one failure in mind, is the
+    usual mistake.</p>
+  <div class="callout mistake">
+    <span class="label">Common mistake</span>
+    <p>Trusting a rule because it looks too simple to be wrong. In building these, rules broke on
+      <code>225.0</code> versus <code>225.00</code>, and on <code>25</code> matching inside
+      <code>250</code>. Simple checks need testing against labels just like AI judges do.</p>
+  </div>
+  <h2>What it costs</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Checking 10,000 conversations a day</th><th class="n">Per month</th></tr></thead>
+    <tbody>
+      <tr><td>Three rules</td><td class="n">$0</td></tr>
+      <tr><td>One AI judge on every conversation</td><td class="n">about $6,700</td></tr>
+      <tr><td>Four AI judges on every conversation</td><td class="n">about $27,000</td></tr>
+    </tbody>
+  </table></div>
+  <div class="check" data-check>
+    <p class="q">The safety rule scored <span data-n="rule_scores.safety"></span>/8. It caught the leaked report in conversation 8 but missed conversation 6. Why?</p>
+    <div class="options">
+      <button class="opt" type="button">The rule has a bug</button>
+      <button class="opt" type="button" data-correct>Conversation 6 is a different kind of safety failure: an unauthorised action, not a leak</button>
+    </div>
+    <p class="feedback" hidden data-yes="Right. The rule only looks for other people's report numbers. Filing a claim without permission needs its own rule." data-no="The rule works as written. It looks for other people's report numbers, and the hotel check didn't leak any. It took an action without permission, which is a different failure that needs a different rule."></p>
+  </div>
+</section>
+
+<!-- ===================================================== 8 -->
+<section class="step" data-step="8" data-part="Building evals" data-title="When you need an AI judge" hidden>
+  <span class="kicker">Step 8 · about 4 minutes</span>
+  <h1>When you need an AI judge</h1>
+  <p class="lead">Some problems can't be caught by matching or counting. This step shows one, and how
+    much the wording of a rubric matters.</p>
+  <p>Remember Answer A from step 1, which is <a href="#c1" data-convo="1">conversation 1</a>. Its headline figure, EUR 75, was correct and came from its
+    search. But it also said this:</p>
+  <div class="box soft"><p>"The older one (expense-04-limits, effective January 2024) shows EUR 60… It
+    has been superseded in full by expense-05-limits-updated, effective 1 January 2026."</p></div>
+  <p>The words <em>superseded</em>, <em>effective</em>, <em>2024</em> and <em>2026</em> appear nowhere
+    in what its search returned. The agent invented a document's status and its dates. No rule that
+    checks numbers can catch this, because the made-up part is a sentence. Catching it needs something
+    that can read.</p>
+  <h2>A rubric, one claim at a time</h2>
+  <p>The judge splits the answer into separate statements, checks each against the documents the
+    agent found, then decides. The first version of the verdict step said:</p>
+  <div class="diff"><span class="del">Verdict: if ANY claim is unsupported, the answer fails.</span></div>
+  <p>It agreed with the answer key on <strong><span data-n="judge.v1"></span> of 8</strong>
+    conversations. On a pass-or-fail question, that's a coin flip. It failed almost everything,
+    because helpful agents add useful context that their search didn't return, such as "you'll need a
+    receipt for this".</p>
+  <h2>The fix: is the claim load-bearing?</h2>
+  <dl class="term"><dt>Load-bearing</dt><dd>A claim the answer depends on. The test: delete the claim
+    and see whether the user's question is still answered. If it isn't, the claim was load-bearing. If
+    the answer still stands, it was an aside.</dd></dl>
+  <div class="grid2">
+    <div class="box">
+      <span class="label">Delete "the cap is EUR 200"</span>
+      <p>Nothing is left. The user asked for the cap and gets no cap.</p>
+      <p><span class="pill fail">load-bearing → fail</span></p>
+    </div>
+    <div class="box">
+      <span class="label">Delete "you'll need a receipt above EUR 25"</span>
+      <p>The answer still says EUR 190 is within the cap, and EUR 570 total.</p>
+      <p><span class="pill pass">aside → pass</span></p>
+    </div>
+  </div>
+  <div class="diff"><span class="del">- Verdict: if ANY claim is unsupported, the answer fails.</span>
+<span class="add">+ For each unsupported claim, delete it from the answer.</span>
+<span class="add">+ If the question is no longer answered, the claim was load-bearing.</span>
+<span class="add">+ Verdict: fail only if an unsupported claim was load-bearing.</span></div>
+  <div class="tw"><table>
+    <thead><tr><th>Rubric</th><th class="n">Agreement with the answer key</th></tr></thead>
+    <tbody>
+      <tr><td>Any unsupported claim fails</td><td class="n"><span class="pill fail"><span data-n="judge.v1"></span> / 8</span></td></tr>
+      <tr><td>Only load-bearing claims fail</td><td class="n"><span class="pill pass"><span data-n="judge.v2"></span> / 8</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout mistake">
+    <span class="label">Common mistake</span>
+    <p>Trusting a rubric because it sounds rigorous. "Any unsupported claim fails" reads as the careful
+      option, and it scored no better than chance. Only checking against labels tells you whether a
+      rubric works.</p>
+  </div>
+  <div class="check" data-check>
+    <p class="q">Answer A (conversation 1) said the older document was superseded. Is that claim load-bearing?</p>
+    <div class="options">
+      <button class="opt" type="button" data-correct>Yes: it's the reason the answer is EUR 75 and not EUR 60</button>
+      <button class="opt" type="button">No: it's background information</button>
+    </div>
+    <p class="feedback" hidden data-yes="Right. Delete it and the user has two contradictory figures and no way to choose. So the answer fails, even though EUR 75 was correct." data-no="Try the delete test. Without that claim, the user has two figures, EUR 60 and EUR 75, and no reason to pick one. The answer depends on it, so it's load-bearing."></p>
+  </div>
+</section>
+
+<!-- ===================================================== 9 -->
+<section class="step" data-step="9" data-part="Building evals" data-title="Groundedness, split in two" hidden>
+  <span class="kicker">Step 9 · about 3 minutes</span>
+  <h1>Groundedness is really two checks</h1>
+  <p class="lead">"Is the answer grounded in its sources?" sounds like one question. It's two, and they
+    point to different fixes.</p>
+  <p>Think of the agent as a student in an open-book exam. It has to find the right pages, then write
+    an answer that sticks to them. Either step can fail.</p>
+  <div class="flow">
+    <div class="box"><span class="label">The documents</span><p>Everything the company has written.</p></div>
+    <div class="box"><span class="label">Check 1 · retrieval</span><p>Did the search return the pages that contain the answer?</p><p style="font-size:14px;color:var(--muted)">If not, fix the search.</p></div>
+    <div class="box"><span class="label">Check 2 · faithfulness</span><p>Does the answer stick to what the search returned?</p><p style="font-size:14px;color:var(--muted)">If not, fix the agent.</p></div>
+  </div>
+  <dl class="term"><dt>Recall</dt><dd>Of the pages that contain the answer, how many did the search
+    find? 1.00 means all of them, 0.00 means none.</dd></dl>
+  <dl class="term"><dt>Faithfulness</dt><dd>Does every load-bearing claim in the answer appear in what
+    the search returned?</dd></dl>
+  <p>Two conversations show why you need both. In each, the answer was in the documents, and the search
+    missed it.</p>
+  <div class="tw" id="ground-table"></div>
+  <p>One combined "groundedness" score fails conversation 4 and passes conversation 5. Both verdicts
+    are right, but the score hides that <strong>the search is broken in both</strong>. You'd fix the
+    agent that invented a number in conversation 4, ship it, and the France rate in conversation 5 would still be missing.</p>
+  <div class="callout mistake">
+    <span class="label">Common mistake</span>
+    <p>Treating "groundedness" as one number. Eval platforms list several related metrics, and each one
+      compares a different pair of things. Recall can only be measured when you know which pages
+      <em>should</em> have been found, so it needs a reference answer. Faithfulness only needs the trace,
+      so it can run on live traffic.</p>
+  </div>
+  <div class="check" data-check>
+    <p class="q">Recall is 0.00 and faithfulness passes. What should you fix?</p>
+    <div class="options">
+      <button class="opt" type="button" data-correct>The search</button>
+      <button class="opt" type="button">The agent</button>
+      <button class="opt" type="button">Both</button>
+    </div>
+    <p class="feedback" hidden data-yes="Right. The agent stuck to what it was given. It was given the wrong pages." data-no="Faithfulness passed, so the agent behaved correctly with what it had. Recall of 0.00 means it was given the wrong pages. Fix the search."></p>
+  </div>
+</section>
+
+<!-- ===================================================== 10 -->
+<section class="step" data-step="10" data-part="Building evals" data-title="Scoring a whole session" hidden>
+  <span class="kicker">Step 10 · about 3 minutes</span>
+  <h1>Scoring a whole session</h1>
+  <p class="lead">Many tools score each turn separately. But you need one verdict for the whole
+    conversation, and how you combine the turns changes the answer.</p>
+  <p><a href="#c7" data-convo="7">Conversation 7</a>, the New York claim from step 6, turn by turn. For each turn: did the agent do what that
+    turn asked?</p>
+  <div class="turnstrip" id="turnstrip"></div>
+  <div class="check">
+    <p class="q">How should those five turns become one verdict?</p>
+    <div class="options" id="combine">
+      <button class="opt" type="button" data-way="avg">Average the turns</button>
+      <button class="opt" type="button" data-way="any">Fail if any turn failed</button>
+      <button class="opt" type="button" data-way="last">Use the last turn</button>
+      <button class="opt" type="button" data-way="goal">Ask whether the user's goal happened</button>
+    </div>
+    <div class="reveal" id="combine-reveal" hidden></div>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th>Method</th><th>Result</th><th>The problem</th></tr></thead>
+    <tbody>
+      <tr><td>Average the turns</td><td><span class="pill fail" id="avg-pill"></span></td><td>Looks like a strong session. The user came to file a claim and left without one.</td></tr>
+      <tr><td>Fail if any turn failed</td><td><span class="pill fail">fail</span></td><td>Too harsh in general. An agent that makes a mistake, is corrected, and finishes the job would still fail.</td></tr>
+      <tr><td>Use the last turn</td><td><span class="pill fail">fail</span></td><td>Right here by luck. If the user had said "thanks" after the failed request, this would pass.</td></tr>
+      <tr><td><strong>Did the user's goal happen</strong></td><td><span class="pill fail">fail</span></td><td>None. It asks the one question the user cares about.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout key">
+    <span class="label">The rule to remember</span>
+    <p>Score turns to find <strong>where</strong> something went wrong. Score the user's goal to decide
+      <strong>whether</strong> the session succeeded.</p>
+  </div>
+</section>
+
+<!-- ===================================================== 11 -->
+<section class="step" data-step="11" data-part="Putting it together" data-title="Testing your tests" hidden>
+  <span class="kicker">Step 11 · about 2 minutes</span>
+  <h1>Testing your tests</h1>
+  <p class="lead">Every scorer in this guide was trusted only after it was compared with the answer
+    key. That comparison is an eval of the eval, and it's the step most teams skip.</p>
+  <p>Agreement alone isn't enough. Check two things:</p>
+  <ul class="plain">
+    <li><strong>Does it catch the bad conversations?</strong> A scorer that misses failures gives you
+      false confidence.</li>
+    <li><strong>Does it leave the good ones alone?</strong> A scorer that flags everything gives you
+      false alarms. People stop trusting the dashboard and go back to reading traces by hand.</li>
+  </ul>
+  <p>The first groundedness rubric in step 8 failed both ways at once: it flagged seven of eight
+    conversations, including good ones, so its "fail" meant nothing.</p>
+  <div class="callout mistake">
+    <span class="label">Common mistake</span>
+    <p>Reporting a score as "passed" when the check didn't apply. A rule about expense claims has
+      nothing to say about a conversation that never involved one. If it reports "pass" there, the
+      dashboard looks healthy for things nobody measured.</p>
+  </div>
+  <div class="callout key">
+    <span class="label">Know your limits</span>
+    <p>Eight conversations are enough to show how this works, not enough to trust a number. With only
+      two safety failures in the set, a single disagreement changes the score a lot. Real eval sets use
+      hundreds of conversations.</p>
+  </div>
+</section>
+
+<!-- ===================================================== 12 -->
+<section class="step" data-step="12" data-part="Putting it together" data-title="Shipping an agent next week" hidden>
+  <span class="kicker">Step 12 · about 2 minutes</span>
+  <h1>If you're shipping an agent next week</h1>
+  <p class="lead">Everything in this guide, as a plan. You have an agent, no labelled data, and a
+    week.</p>
+  <ol class="plain" style="padding-left:22px;display:grid;gap:10px">
+    <li><strong>Label 20 to 50 real conversations by hand</strong> on several separate questions,
+      before building anything. <span style="color:var(--muted)">Step 4</span></li>
+    <li><strong>Write rules</strong> for everything you can match or count: required and forbidden
+      tools, IDs, numbers. <span style="color:var(--muted)">Step 7</span></li>
+    <li><strong>Use an AI judge only where a rule can't reach</strong>, with clear pass and fail
+      conditions. <span style="color:var(--muted)">Step 8</span></li>
+    <li><strong>Check every scorer against your labels</strong>, including false alarms on the good
+      conversations. <span style="color:var(--muted)">Step 11</span></li>
+    <li><strong>Score a session by whether the user's goal happened</strong>, not by averaging turns.
+      <span style="color:var(--muted)">Step 10</span></li>
+    <li><strong>For document answers, check the search and the answer separately.</strong>
+      <span style="color:var(--muted)">Step 9</span></li>
+    <li><strong>Plan for live traffic</strong>, where only checks that don't need a known-correct
+      answer can run. <span style="color:var(--muted)">Step 9</span></li>
+  </ol>
+  <h2>What to avoid</h2>
+  <ul class="plain">
+    <li>Averaging turns into a session score.</li>
+    <li>Scales from 1 to 10. Use pass or fail with stated conditions.</li>
+    <li>Paying for an AI judge where a rule would do.</li>
+    <li>Reading only the final reply.</li>
+    <li>Treating safety as part of "was the answer good?". The leaked report in <a href="#c8" data-convo="8">conversation 8</a> was helpful,
+      accurate and well formatted.</li>
+  </ul>
+  <div class="box soft">
+    <span class="label">About this guide</span>
+    <p>Written by Deepak Bachchani. The eight conversations are synthetic and every name and ID is
+      invented. The document search, scores and arithmetic behind them are real code, and every number
+      in this guide is computed from the project's data.</p>
+    <p><a href="https://github.com/dbachchani1956-product/why-evals-matter">Source and data on GitHub</a></p>
+  </div>
+</section>
+
+    <nav class="pager" aria-label="Step navigation" style="max-width:720px;margin-left:auto;margin-right:auto">
+      <button class="btn" type="button" id="prev"><small>Previous</small><span id="prev-t"></span></button>
+      <button class="btn primary next" type="button" id="next"><small>Next</small><span id="next-t"></span></button>
+    </nav>
+  </main>
+
+  <aside class="convos" id="convos" aria-label="The eight conversations">
+    <div class="convos-head">
+      <div>
+        <b>The eight conversations</b>
+        <span>Every example in the guide comes from one of these. Click one to read it.</span>
+      </div>
+      <button class="iconbtn" id="convos-close" type="button" hidden>Close</button>
+    </div>
+    <details class="agent-info">
+      <summary>What this agent can do</summary>
+      <p>An expense assistant for a company's employees. It has four tools:</p>
+      <ul class="plain">
+        <li><code>search_policy</code> searches the travel and expense policy</li>
+        <li><code>calculate_reimbursement</code> adds up amounts</li>
+        <li><code>get_expense_report</code> looks up an employee's open report</li>
+        <li><code>submit_expense</code> files an expense claim</li>
+      </ul>
+    </details>
+    <div id="library"></div>
+  </aside>
+</div>
+
+<script src="../shared/data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

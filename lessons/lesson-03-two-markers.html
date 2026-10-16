@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two markers</title>
+<style>
+  :root{--bg:#fff;--fg:#18181b;--muted:#6b7280;--line:#d4d4d8;--card:#fafafa;
+        --you:#d97706;--you-bg:#fffbeb;--rule:#0d9488;--rule-bg:#f0fdfa;
+        --no:#dc2626;--no-bg:#fef2f2;--ok:#16a34a;--ok-bg:#f0fdf4}
+  @media(prefers-color-scheme:dark){:root{--bg:#18181b;--fg:#f4f4f5;--muted:#a1a1aa;--line:#3f3f46;--card:#212124;
+        --you:#fbbf24;--you-bg:#3a2c0c;--rule:#2dd4bf;--rule-bg:#10332f;
+        --no:#f87171;--no-bg:#3b1515;--ok:#4ade80;--ok-bg:#14301d}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:44px 22px 80px;background:var(--bg);color:var(--fg);
+       font:17px/1.6 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif}
+  main{max-width:780px;margin:0 auto}
+  h1{font-size:26px;letter-spacing:-.02em;margin:0 0 8px}
+  .sub{color:var(--muted);font-size:16px;margin:0 0 34px}
+  p{font-size:17px}
+
+  .who{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:22px 0 36px}
+  @media(max-width:700px){.who{grid-template-columns:1fr}}
+  .w{border:2px solid;border-radius:12px;padding:15px 18px}
+  .w .n{font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+  .w .r{font-size:16.5px}
+  .w1{border-color:var(--you);background:var(--you-bg)} .w1 .n{color:var(--you)}
+  .w2{border-color:var(--rule);background:var(--rule-bg)} .w2 .n{color:var(--rule)}
+
+  .essay{border:1px solid var(--line);border-radius:13px;padding:17px 20px;margin:15px 0;background:var(--card)}
+  .essay .t{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+            color:var(--muted);margin-bottom:7px}
+  .essay .d{font-size:17px;margin-bottom:14px}
+  .marks{display:grid;grid-template-columns:1fr 1fr 118px;gap:11px;align-items:center}
+  @media(max-width:700px){.marks{grid-template-columns:1fr}}
+  .m{border:1.5px solid;border-radius:9px;padding:9px 12px;font-size:15px;text-align:center;font-weight:700}
+  .m small{display:block;font-weight:400;font-size:12.5px;opacity:.8;margin-top:2px}
+  .m1{border-color:var(--you);background:var(--you-bg)}
+  .m2{border-color:var(--rule);background:var(--rule-bg)}
+  .f{color:var(--no)} .pz{color:var(--ok)}
+  .agree{text-align:center;font-size:13px;font-weight:700;letter-spacing:.05em;
+          text-transform:uppercase;padding:8px;border-radius:9px}
+  .ag{background:var(--ok-bg);color:var(--ok)}
+  .dg{background:var(--no-bg);color:var(--no)}
+
+  .punch{font-size:19px;font-weight:600;line-height:1.5;border-left:5px solid var(--you);
+         background:var(--you-bg);padding:18px 22px;border-radius:0 12px 12px 0;margin:34px 0}
+  .tie{border:2px solid var(--line);border-radius:13px;padding:19px 22px;margin:30px 0;background:var(--card)}
+  .tie h2{font-size:19px;margin:0 0 10px}
+  code{font-family:ui-monospace,monospace;font-size:14px;background:rgba(125,125,125,.16);
+       padding:1px 5px;border-radius:4px}
+  .q{font-size:17px;border:2px dashed var(--you);border-radius:12px;padding:18px 20px;
+     margin:34px 0 0;background:var(--you-bg)}
+  .q b{display:block;margin-bottom:7px;font-size:15px;color:var(--you);
+       text-transform:uppercase;letter-spacing:.06em}
+</style>
+</head>
+<body>
+<main>
+
+<h1>Two markers grading essays</h1>
+<p class="sub">No agents. We'll come back to those at the end.</p>
+
+<div class="who">
+  <div class="w w1"><div class="n">Marker A — you</div>
+    <div class="r">Fails an essay when <b>the argument is wrong</b>.</div></div>
+  <div class="w w2"><div class="n">Marker B — a rule</div>
+    <div class="r">Fails an essay when <b>it's under the word count</b>.</div></div>
+</div>
+
+<p>You've never compared notes. You hand each other one essay to check you agree.</p>
+
+<div class="essay">
+  <div class="t">essay 1 — the one you compared</div>
+  <div class="d">Short. <b>And</b> the argument is wrong.</div>
+  <div class="marks">
+    <div class="m m1"><span class="f">FAIL</span><small>argument is wrong</small></div>
+    <div class="m m2"><span class="f">FAIL</span><small>under word count</small></div>
+    <div class="agree ag">you agree</div>
+  </div>
+</div>
+
+<p>Both said fail. Looks like Marker B grades the same way you do. So you let B
+mark the rest of the pile.</p>
+
+<div class="essay">
+  <div class="t">essay 2 — next in the pile</div>
+  <div class="d">Long and detailed. The argument is <b>still wrong</b>.</div>
+  <div class="marks">
+    <div class="m m1"><span class="f">FAIL</span><small>argument is wrong</small></div>
+    <div class="m m2"><span class="pz">PASS</span><small>word count is fine</small></div>
+    <div class="agree dg">opposite</div>
+  </div>
+</div>
+
+<div class="essay">
+  <div class="t">essay 3 — next again</div>
+  <div class="d">Short, but the argument is <b>excellent</b>.</div>
+  <div class="marks">
+    <div class="m m1"><span class="pz">PASS</span><small>argument is good</small></div>
+    <div class="m m2"><span class="f">FAIL</span><small>under word count</small></div>
+    <div class="agree dg">opposite</div>
+  </div>
+</div>
+
+<div class="punch">
+  Marker B never graded arguments. It graded length.<br><br>
+  You only agreed on essay 1 because that essay happened to be <b>short and wrong at the same
+  time</b>. One reason, two reasons — you couldn't tell them apart from that single paper.
+</div>
+
+<p>And notice what the agreement cost you. You trusted B, so from now on <b>every long essay with
+a wrong argument passes</b>. Students work out that padding gets them through. The marking looks
+fine on paper the whole time.</p>
+
+
+<div class="tie">
+  <h2>Now the same thing, with your rule</h2>
+
+  <p><code>s05</code> was essay 1. That one conversation had <b>two faults at once</b>:</p>
+
+  <p>→ the agent didn't give the France rate <span style="color:var(--muted)">(what you were marking)</span><br>
+     → the agent didn't ask about full days and travel days <span style="color:var(--muted)">(what your rule was marking)</span></p>
+
+  <p>Both faults, one conversation, so both of you said fail — and it looked like your rule marks
+  the way you do.</p>
+
+  <p>It doesn't. Your rule is Marker B. It's grading whether a question got asked, not whether the
+  user got the right number. We just haven't shown it an "essay 2" yet — a conversation that asks
+  the clarifying question nicely and still gives the user nothing useful.</p>
+</div>
+
+<div class="q">
+  <b>Check I explained it</b>
+  Which essay in the pile is the one that exposes Marker B — and why couldn't essay 1 have
+  exposed it?<br><br>
+  Still not landing? Say so. There's a third way to come at this and no cost to trying it.
+</div>
+
+</main>
+</body>
+</html>

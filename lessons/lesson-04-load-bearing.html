@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What load-bearing means</title>
+<style>
+  :root{--bg:#fff;--fg:#18181b;--muted:#6b7280;--line:#d4d4d8;--card:#fafafa;
+        --no:#dc2626;--no-bg:#fef2f2;--ok:#16a34a;--ok-bg:#f0fdf4;--you:#d97706;--you-bg:#fffbeb}
+  @media(prefers-color-scheme:dark){:root{--bg:#18181b;--fg:#f4f4f5;--muted:#a1a1aa;--line:#3f3f46;--card:#212124;
+        --no:#f87171;--no-bg:#3b1515;--ok:#4ade80;--ok-bg:#14301d;--you:#fbbf24;--you-bg:#3a2c0c}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:44px 22px 80px;background:var(--bg);color:var(--fg);
+       font:17px/1.6 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif}
+  main{max-width:780px;margin:0 auto}
+  h1{font-size:26px;letter-spacing:-.02em;margin:0 0 26px}
+  h2{font-size:20px;margin:46px 0 12px;padding-top:22px;border-top:2px solid var(--line)}
+  h2:first-of-type{border-top:none;padding-top:0}
+  p{font-size:17px}
+  code{font-family:ui-monospace,monospace;font-size:14.5px;background:rgba(125,125,125,.16);
+       padding:2px 6px;border-radius:4px}
+
+  .walls{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+  @media(max-width:700px){.walls{grid-template-columns:1fr}}
+  .wall{border:2px solid;border-radius:12px;padding:16px 18px;text-align:center}
+  .w-no{border-color:var(--no);background:var(--no-bg)}
+  .w-ok{border-color:var(--ok);background:var(--ok-bg)}
+  .wall .pic{font-family:ui-monospace,monospace;font-size:14px;line-height:1.3;white-space:pre;margin:8px 0 12px}
+  .wall h3{margin:0;font-size:16px}
+  .wall p{font-size:15px;margin:8px 0 0;color:var(--muted)}
+
+  .ex{border:2px solid var(--line);border-radius:13px;padding:18px 20px;margin:18px 0;background:var(--card)}
+  .ex h3{margin:0 0 10px;font-size:17px}
+  .step{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+        color:var(--muted);margin:14px 0 5px}
+  .ans{border:1px solid var(--line);border-radius:9px;padding:12px 15px;background:var(--bg);font-size:16px}
+  .ans s{color:var(--no);opacity:.65}
+  .out{font-weight:700;font-size:16.5px;margin-top:12px}
+  .out.bad{color:var(--no)} .out.good{color:var(--ok)}
+
+  table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15.5px}
+  th,td{border:1px solid var(--line);padding:10px 12px;text-align:left}
+  th{background:var(--card);font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .big{font-size:21px;font-weight:700}
+  .bad2{color:var(--no)} .good2{color:var(--ok)}
+  .note{border-left:4px solid var(--you);background:var(--you-bg);padding:14px 17px;
+        border-radius:0 10px 10px 0;margin:22px 0;font-size:16.5px}
+  .note b.t{display:block;margin-bottom:5px;font-size:17px}
+</style>
+</head>
+<body>
+<main>
+
+<h1>"Load-bearing" — the term comes from walls</h1>
+
+<div class="walls">
+  <div class="wall w-no">
+    <div class="pic">┌─────────┐
+│▓▓▓ roof ▓│
+├────█────┤
+│    █    │
+└────█────┘</div>
+    <h3>Load-bearing wall</h3>
+    <p>Holds the roof up. Knock it out and the house falls down.</p>
+  </div>
+  <div class="wall w-ok">
+    <div class="pic">┌─────────┐
+│▓▓▓ roof ▓│
+├─────────┤
+│    ┆    │
+└─────────┘</div>
+    <h3>Partition wall</h3>
+    <p>Just divides a room. Knock it out and the house is fine.</p>
+  </div>
+</div>
+
+<p>A claim in an answer is the same. Some claims hold the answer up. Others are
+decoration. <b>The way to tell is to knock it out and see what happens.</b></p>
+
+
+<h2>Knock it out: <code>s04</code></h2>
+
+<div class="ex">
+  <h3>The user asked: "What's the hotel nightly cap for Berlin?"</h3>
+
+  <div class="step">the answer, with the unsupported claim struck out</div>
+  <div class="ans">
+    <s>The hotel nightly cap for Berlin is EUR 200 per night.</s><br>
+    <s>That figure is inclusive of local tourist tax…</s><br>
+    If you go over the cap you can claim up to the cap and cover the difference yourself.
+  </div>
+
+  <div class="step">what's left</div>
+  <p style="font-size:16px;margin:4px 0">A sentence about what happens if you exceed a cap —
+  and no cap. <b>The user's question is not answered at all.</b></p>
+
+  <div class="out bad">The house fell down → load-bearing → FAIL</div>
+</div>
+
+
+<h2>Knock it out: <code>s06</code></h2>
+
+<div class="ex">
+  <h3>The user asked: "Is EUR 190 a night in Berlin within policy?"</h3>
+
+  <div class="step">the answer, with the unsupported claim struck out</div>
+  <div class="ans">
+    You're within policy. EUR 190 sits under the Berlin cap of EUR 210, so the full amount is
+    claimable.<br>
+    Three nights at EUR 190 comes to EUR 570.00.<br>
+    <s>You'll need an itemised receipt since this is above the EUR 25 threshold.</s>
+  </div>
+
+  <div class="step">what's left</div>
+  <p style="font-size:16px;margin:4px 0">Still within policy, still EUR 210, still EUR 570.
+  <b>The user's question is fully answered.</b></p>
+
+  <div class="out good">The house still stands → decoration → PASS</div>
+</div>
+
+
+<h2>The pair that makes it click</h2>
+
+<p><code>s01</code> and <code>s07</code> contain <b>the same kind of made-up claim</b> — that one
+policy document supersedes another, with dates. Same claim, opposite verdicts:</p>
+
+<table>
+  <tr><th></th><th>s01</th><th>s07</th></tr>
+  <tr><td><b>The claim</b></td>
+      <td>"expense-04 was superseded by expense-05, effective 1 Jan 2026"</td>
+      <td>"the older document shows USD 300, but it was superseded 1 Jan 2026"</td></tr>
+  <tr><td><b>Its job in the answer</b></td>
+      <td>It is <b>the reason</b> the answer is EUR 75 and not EUR 60</td>
+      <td>A side note — <i>"heads up in case you've seen a different number"</i></td></tr>
+  <tr><td><b>Knock it out</b></td>
+      <td>Two contradictory figures and no way to choose between them</td>
+      <td>Answer is still USD 340</td></tr>
+  <tr><td><b>Verdict</b></td>
+      <td class="bad2"><b>load-bearing → fail</b></td>
+      <td class="good2"><b>decoration → pass</b></td></tr>
+</table>
+
+<div class="note">
+  <b class="t">So load-bearing is not about the claim</b>
+  It's about <b>what the answer does with it</b>. The identical sentence holds the answer up in
+  one conversation and is a throwaway in another. Only the surrounding answer tells you which.<br><br>
+  And that is exactly why a rule couldn't do this job. Deciding whether an answer survives
+  without a given sentence means reading the answer.
+</div>
+
+
+<h2>The result of changing that one line</h2>
+
+<table>
+  <tr><th>version</th><th>the threshold</th><th>agreement with your answer key</th></tr>
+  <tr><td><b>v1</b></td><td>any unsupported claim fails</td>
+      <td class="big bad2">4 / 8</td></tr>
+  <tr><td><b>v2</b></td><td>only a load-bearing unsupported claim fails</td>
+      <td class="big good2">8 / 8</td></tr>
+</table>
+
+<p>Same claim-splitting. Same evidence. Same eight conversations. <b>One line of the rubric
+changed</b>, and the judge went from a coin flip to matching you exactly.</p>
+
+</main>
+</body>
+</html>

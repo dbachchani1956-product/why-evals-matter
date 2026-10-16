@@ -1,0 +1,180 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Follow the reader's system theme: the Aceternity components key off the .dark class. */
+@theme {
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body { @apply font-sans antialiased; }
+:focus-visible { @apply outline-2 outline-offset-2 outline-neutral-900 dark:outline-white; }
+
+/* ---------------------------------------------------------------
+   Lesson content. The HTML is shared with v1, so its class names
+   are styled here rather than rewritten.
+   --------------------------------------------------------------- */
+.lesson .step { @apply grid gap-6; }
+.lesson .step[hidden] { display: none; }
+.lesson .kicker { @apply hidden; }
+.lesson .step.is-hero > h1:first-of-type { @apply sr-only; }
+.lesson h1 { @apply text-3xl font-semibold leading-tight tracking-tight text-balance md:text-4xl; }
+.lesson h2 { @apply mt-4 text-xl font-semibold tracking-tight text-balance; }
+.lesson h3 { @apply text-base font-semibold; }
+.lesson p { @apply max-w-[66ch] leading-relaxed text-neutral-700 dark:text-neutral-300; }
+.lesson .lead { @apply text-lg text-neutral-500 dark:text-neutral-400; }
+.lesson strong { @apply font-semibold text-neutral-900 dark:text-white; }
+.lesson a { @apply font-medium text-neutral-900 underline decoration-neutral-300 underline-offset-4 transition hover:decoration-neutral-900 dark:text-white dark:decoration-neutral-600 dark:hover:decoration-white; }
+.lesson code { @apply rounded-md border border-neutral-200 bg-neutral-100 px-1.5 py-0.5 font-mono text-[0.85em] dark:border-neutral-800 dark:bg-neutral-900; }
+.lesson .mono { @apply font-mono; }
+.lesson ul.plain, .lesson ol.plain { @apply grid max-w-[66ch] gap-2 pl-5 text-neutral-700 dark:text-neutral-300; }
+.lesson ul.plain { @apply list-disc; }
+.lesson ol.plain { @apply list-decimal; }
+
+/* blocks */
+.lesson .box { @apply grid min-w-0 gap-2.5 rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900; }
+.lesson .box.soft { @apply border-transparent bg-neutral-100 dark:bg-neutral-900; }
+.lesson .label { @apply text-xs font-semibold uppercase tracking-wider text-neutral-500; }
+.lesson .grid2 { @apply grid gap-3 sm:grid-cols-2; }
+.lesson .flow { @apply grid gap-3 sm:grid-cols-3; }
+
+/* a term definition: the core teaching device */
+.lesson .term { @apply relative m-0 grid gap-1 overflow-hidden rounded-2xl border border-neutral-200 bg-gradient-to-br from-white to-neutral-50 p-5 pl-6 dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-950; }
+.lesson .term::before { content: ""; @apply absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-sky-400 via-indigo-500 to-violet-500; }
+.lesson .term dt { @apply text-lg font-semibold; }
+.lesson .term dd { @apply m-0 leading-relaxed text-neutral-700 dark:text-neutral-300; }
+
+.lesson .callout { @apply grid gap-1.5 rounded-2xl p-5; }
+.lesson .callout.mistake { @apply border border-amber-200 bg-amber-50 dark:border-amber-500/20 dark:bg-amber-500/5; }
+.lesson .callout.mistake .label { @apply text-amber-700 dark:text-amber-400; }
+.lesson .callout.key { @apply border border-indigo-200 bg-indigo-50 dark:border-indigo-500/20 dark:bg-indigo-500/5; }
+.lesson .callout.key .label { @apply text-indigo-700 dark:text-indigo-300; }
+
+/* tables */
+.lesson .tw { @apply min-w-0 overflow-x-auto; }
+.lesson table { @apply w-full border-collapse text-sm; }
+.lesson th, .lesson td { @apply border-b border-neutral-200 py-2.5 pr-4 text-left align-top dark:border-neutral-800; }
+.lesson th { @apply text-xs font-medium text-neutral-500; }
+.lesson td.n, .lesson th.n { @apply pl-4 pr-0 text-right whitespace-nowrap tabular-nums; }
+.lesson .pill { @apply inline-block rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap; }
+.lesson .pill.pass { @apply bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400; }
+.lesson .pill.fail { @apply bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400; }
+.lesson .pill.na { @apply bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400; }
+
+/* diagrams */
+.lesson .tree, .lesson .diff { @apply overflow-x-auto rounded-2xl border border-neutral-200 bg-neutral-50 p-5 font-mono text-[13px] leading-7 whitespace-pre dark:border-neutral-800 dark:bg-neutral-900; }
+.lesson .tree .t { @apply text-neutral-500; }
+.lesson .diff .del { @apply text-rose-600 dark:text-rose-400; }
+.lesson .diff .add { @apply text-emerald-600 dark:text-emerald-400; }
+.lesson .turnstrip { @apply grid grid-cols-5 gap-2; }
+.lesson .turnstrip div { @apply rounded-xl bg-emerald-50 px-1 py-3 text-center text-xs font-medium text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400; }
+.lesson .turnstrip div.bad { @apply bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400; }
+
+/* conversations */
+.lesson .convo { @apply min-w-0 overflow-hidden rounded-2xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900; }
+.lesson .convo-head { @apply flex flex-wrap justify-between gap-2 border-b border-neutral-200 bg-neutral-50 px-4 py-2.5 text-xs text-neutral-500 dark:border-neutral-800 dark:bg-neutral-950; }
+.lesson .convo-head b { @apply font-medium text-neutral-900 dark:text-white; }
+.lesson .convo-body { @apply grid grid-cols-1 gap-3 p-4; }
+.lesson .convo.bare { @apply border-0 bg-transparent; }
+.lesson .convo.bare .convo-body { @apply p-0; }
+.lesson .row { @apply grid grid-cols-1 gap-1 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-3; }
+.lesson .row .who { @apply pt-0.5 text-xs font-medium text-neutral-500; }
+.lesson .row .body { @apply min-w-0 text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300; }
+.lesson .row .body p { @apply text-[15px]; }
+.lesson .row .body > * + * { @apply mt-2; }
+.lesson .row.user .body { @apply font-medium text-neutral-900 dark:text-white; }
+.lesson .row.tool .body { @apply rounded-lg bg-neutral-100 px-2.5 py-2 font-mono text-xs leading-relaxed break-words text-neutral-600 dark:bg-neutral-950 dark:text-neutral-400; }
+.lesson .turnsep { @apply my-1 border-0 border-t border-dashed border-neutral-200 dark:border-neutral-800; }
+.lesson .collapsed-turn { @apply text-sm text-neutral-500; }
+.panel-convo .row { @apply grid-cols-1 gap-0.5; }
+.panel-convo .row .body, .panel-convo .row .body p { @apply text-sm; }
+.panel-convo th, .panel-convo td { @apply py-1.5 pr-2 text-xs; }
+
+/* interaction */
+.lesson .check { @apply grid gap-3 rounded-2xl border border-neutral-200 p-5 dark:border-neutral-800; }
+.lesson .check .q { @apply font-semibold text-neutral-900 dark:text-white; }
+.lesson .options { @apply grid gap-2; }
+.lesson .opt { @apply cursor-pointer rounded-xl border border-neutral-200 bg-white px-4 py-3 text-left text-[15px] font-medium transition hover:border-neutral-400 disabled:cursor-default dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-600; }
+.lesson .opt.right { @apply border-emerald-500 bg-emerald-50 dark:bg-emerald-500/10; }
+.lesson .opt.wrong { @apply border-rose-500 bg-rose-50 dark:bg-rose-500/10; }
+.lesson .feedback { @apply text-[15px]; }
+.lesson .choices { @apply flex flex-wrap gap-2; }
+.lesson .btn { @apply cursor-pointer rounded-xl border border-neutral-200 bg-white px-5 py-2.5 text-sm font-medium transition hover:border-neutral-400 disabled:cursor-default disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-900; }
+.lesson .btn.chosen { @apply border-neutral-900 opacity-100 dark:border-white; }
+.lesson .reveal { @apply grid gap-2.5 rounded-xl bg-neutral-50 p-4 dark:bg-neutral-950; }
+.lesson .reveal[hidden], .lesson .feedback[hidden] { display: none; }
+
+/* The tracing beam sits in the left gutter on wide screens; on phones it would overlap the text. */
+@media (max-width: 767px) { .beam-wrap > div:first-child { display: none; } }
+
+/* text-generate-effect: each word blurs in. Words are visible at rest, so the headline is
+   never stuck invisible if the animation is paused, throttled or switched off. */
+@keyframes tge-in { from { opacity: 0.08; } to { opacity: 1; } }
+@keyframes tge-in-blur { from { opacity: 0.08; filter: blur(8px); } to { opacity: 1; filter: blur(0); } }
+.tge-word { display: inline; animation: tge-in ease-out backwards; }
+.tge-word.tge-blur { animation-name: tge-in-blur; }
+@media (prefers-reduced-motion: reduce) { .tge-word { animation: none; } }
+
+/* ---------------------------------------------------------------
+   Lesson 2 anatomy diagram: four nested frames, outside in.
+   Each frame's colour is used for its tag, border and key swatch.
+   --------------------------------------------------------------- */
+.anatomy { --c-trace: #6366f1; --c-session: #0ea5e9; --c-turn: #10b981; --c-span: #f59e0b; @apply m-0 grid gap-4; }
+.an-trace { @apply relative rounded-3xl border-2 border-dashed p-4 pt-9 sm:p-5 sm:pt-10; border-color: color-mix(in srgb, var(--c-trace) 55%, transparent); background: color-mix(in srgb, var(--c-trace) 4%, transparent); }
+.an-session { @apply relative grid gap-4 rounded-2xl border-2 p-3 pt-9 sm:p-4 sm:pt-10; border-color: color-mix(in srgb, var(--c-session) 60%, transparent); background: color-mix(in srgb, var(--c-session) 5%, transparent); }
+.an-turn { @apply relative grid gap-2.5 rounded-xl border-2 bg-white p-3 pt-8 dark:bg-neutral-950; border-color: color-mix(in srgb, var(--c-turn) 65%, transparent); }
+.an-spans { @apply relative grid gap-1.5 rounded-lg border border-dashed p-2 pt-7; border-color: color-mix(in srgb, var(--c-span) 70%, transparent); }
+.an-tag { @apply absolute left-3 top-2 inline-flex items-baseline gap-2 rounded-md px-2 py-0.5 text-xs font-semibold text-white; }
+.an-tag span { @apply font-normal opacity-90; }
+.an-tag-trace { background: var(--c-trace); }
+.an-tag-session { background: var(--c-session); }
+.an-tag-turn { background: var(--c-turn); }
+.an-tag-span { background: var(--c-span); @apply left-2 top-1.5 text-[11px] text-neutral-950; }
+.an-user, .an-span { @apply grid min-w-0 gap-x-3 rounded-md px-2.5 py-1.5 text-sm sm:grid-cols-[86px_minmax(0,1fr)]; }
+.an-user { @apply bg-neutral-100 font-medium dark:bg-neutral-900; }
+.an-span { background: color-mix(in srgb, var(--c-span) 10%, transparent); }
+.an-kind { @apply text-xs font-semibold text-neutral-500; }
+.an-span .an-kind { color: color-mix(in srgb, var(--c-span) 80%, black); }
+.dark .an-span .an-kind { color: color-mix(in srgb, var(--c-span) 85%, white); }
+.an-what { @apply min-w-0 break-words text-neutral-800 dark:text-neutral-200; }
+.an-tool .an-what { @apply font-mono text-[13px]; }
+.an-key { @apply grid gap-2 text-sm text-neutral-600 sm:grid-cols-2 dark:text-neutral-400; }
+.an-key span { @apply flex items-baseline gap-2; }
+.an-key b { @apply font-semibold text-neutral-900 dark:text-white; }
+.an-key i { @apply inline-block h-2.5 w-2.5 shrink-0 translate-y-px rounded-sm; }
+.k-trace { background: var(--c-trace); } .k-session { background: var(--c-session); }
+.k-turn { background: var(--c-turn); } .k-span { background: var(--c-span); }
+
+/* ---------------------------------------------------------------
+   Detailed conversations (right panel): reasoning, search results, sums
+   --------------------------------------------------------------- */
+.lesson .row.think .body { @apply rounded-lg border-l-2 border-neutral-300 pl-2.5 text-[13px] italic text-neutral-500 dark:border-neutral-700 dark:text-neutral-400; }
+.lesson .row.search .body { @apply grid gap-2 rounded-lg bg-neutral-100 p-2.5 font-sans text-sm text-neutral-700 dark:bg-neutral-950 dark:text-neutral-300; }
+.search-q { @apply text-[13px]; }
+.search-q b { @apply font-medium text-neutral-900 dark:text-white; }
+.search-cap { @apply text-xs text-neutral-500; }
+.hits { @apply grid gap-1; }
+.hit { @apply rounded-md border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900; }
+.hit summary { @apply grid cursor-pointer list-none grid-cols-[18px_minmax(0,1fr)_auto] items-center gap-2 px-2 py-1.5; }
+.hit summary::-webkit-details-marker { display: none; }
+.hit[open] summary { @apply border-b border-neutral-200 dark:border-neutral-800; }
+.hit-rank { @apply text-center font-mono text-[11px] text-neutral-500; }
+.hit-main { @apply grid min-w-0; }
+.hit-main b { @apply truncate text-[13px] font-medium text-neutral-900 dark:text-white; }
+.hit-doc { @apply truncate font-mono text-[10.5px] text-neutral-500; }
+.hit-score { @apply flex items-center gap-1.5; }
+.hit-bar { @apply block h-1.5 w-12 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800; }
+.hit-bar i { @apply block h-full rounded-full bg-gradient-to-r from-sky-400 to-indigo-500; }
+.hit-num { @apply w-8 text-right font-mono text-[11px] tabular-nums text-neutral-600 dark:text-neutral-400; }
+.hit-text { @apply px-2.5 py-2 text-[13px] text-neutral-700 dark:text-neutral-300; }
+.hit-text p { @apply text-[13px]; }
+.hit-text table { @apply text-xs; }
+.lesson table.calc td { @apply py-1 text-xs; }
+
+@keyframes panel-in { from { opacity: 0.2; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.panel-open { animation: panel-in .22s ease-out backwards; }
+@media (prefers-reduced-motion: reduce) { .panel-open { animation: none; } }
+
+/* tables: keep neighbouring columns apart, whatever their alignment */
+.lesson th + th, .lesson td + td { @apply pl-4; }
